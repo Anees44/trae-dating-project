@@ -4,24 +4,28 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 function Register() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  })
+  const navigate = useNavigate()
+  const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" })
+  const [error, setError] = useState("")
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle registration logic here
-    console.log('Register:', formData)
-  }
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    setError("")
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      })
+      localStorage.setItem("token", res.data.token)
+      navigate("/dashboard") 
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong")
+    }
   }
 
   return (

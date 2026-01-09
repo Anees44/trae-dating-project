@@ -9,18 +9,21 @@ function Login() {
     password: '',
   })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Handle login logic here
-    console.log('Login:', formData)
-  }
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+ const handleSubmit = async (e) => {
+  e.preventDefault()
+  setError("")
+  try {
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+      email: formData.email,
+      password: formData.password
     })
+    localStorage.setItem("token", res.data.token)
+    navigate("/dashboard")
+  } catch (err) {
+    setError(err.response?.data?.message || "Something went wrong")
   }
+}
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50 flex flex-col">
