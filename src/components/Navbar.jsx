@@ -55,7 +55,7 @@ function Navbar() {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <a
-                href="https://help.mashallah.app/hc/en-us"
+                href="/muslim-dating"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-700 hover:text-primary-600 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-primary-50 relative group"
@@ -142,7 +142,7 @@ function Navbar() {
               Contact
             </Link>
             <a
-              href="https://help.mashallah.app/hc/en-us"
+              href="/muslim-dating"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium"
