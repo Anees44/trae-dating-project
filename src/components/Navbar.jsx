@@ -56,7 +56,6 @@ function Navbar() {
               </Link>
               <a
                 href="/muslim-dating"
-                target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-700 hover:text-primary-600 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-primary-50 relative group"
               >
