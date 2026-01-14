@@ -153,7 +153,6 @@ function App() {
       <Navbar dark={dark} setDark={setDark} />
 
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/testimonials" element={<Testimonials />} />
