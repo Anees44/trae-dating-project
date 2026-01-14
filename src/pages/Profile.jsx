@@ -35,6 +35,12 @@ function Profile() {
   }, [navigate])
 
   const fetchProfile = async () => {
+    if (!API_PROFILE) {
+      setMessage({ type: 'error', text: 'API URL not defined!' })
+      setLoading(false)
+      return
+    }
+
     try {
       const token = localStorage.getItem('token')
       const { data } = await axios.get(API_PROFILE, {
@@ -94,6 +100,12 @@ function Profile() {
     e.preventDefault()
     setSaving(true)
     setMessage({ type: '', text: '' })
+
+    if (!API_PROFILE) {
+      setMessage({ type: 'error', text: 'API URL not defined!' })
+      setSaving(false)
+      return
+    }
 
     try {
       const token = localStorage.getItem('token')
