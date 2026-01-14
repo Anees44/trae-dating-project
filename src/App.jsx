@@ -38,6 +38,7 @@ import Testimonials from "./pages/Testimonials";
 import Contact from "./pages/Contact";
 import MuslimDating from "./pages/MuslimDating";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 
 function App() {
   const [dark, setDark] = useState(false);
@@ -60,6 +61,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/muslim-dating" element={<MuslimDating />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );
