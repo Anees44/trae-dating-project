@@ -26,13 +26,11 @@ function Login() {
     e.preventDefault()
     setError('')
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API}`,
-        {
-          email: formData.email,
-          password: formData.password
-        }
-      );
+      const res = await axios.post(import.meta.env.VITE_API, {
+        email: formData.email,
+        password: formData.password
+      });
+
       console.log(formData);
 
 
