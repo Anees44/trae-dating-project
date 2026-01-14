@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import Dashboard from './Dashboard'
 
 function Login() {
   const navigate = useNavigate()
@@ -36,7 +37,7 @@ function Login() {
 
 
       localStorage.setItem('token', res.data.token)
-      navigate('/dashboard')
+      navigate('/Dashboard')
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong')
     }
