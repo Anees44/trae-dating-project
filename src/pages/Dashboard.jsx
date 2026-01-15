@@ -64,7 +64,6 @@ function Dashboard() {
             <p>Communicate safely with your matches.</p>
             <div className="card-cta">Open Messages</div>
           </Link>
-
           <Link to="/settings" className={`card group ${isVisible ? 'visible' : ''} delay-4`}>
             <div className="card-icon settings-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,6 +74,7 @@ function Dashboard() {
             <p>Update your account preferences, email, and password.</p>
             <div className="card-cta">Manage Account</div>
           </Link>
+
         </div>
       </main>
 

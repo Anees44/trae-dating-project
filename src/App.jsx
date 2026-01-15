@@ -14,7 +14,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Profile from "./pages/Profile";
 import Matches from './pages/Matches'
 import Messages from './pages/Messages'  
-import Settings from './pages/Settings'
+// import Settings from './pages/Settings.jsx'
 
 import './index.css'; // Import plain CSS
 
@@ -56,7 +56,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/messages" element={<Messages />} /> 
-            <Route path="/settings" element={<Settings />} /> 
+            {/* <Route path="/settings" element={<Settings />} />  */}
 
             {/* Other pages */}
             <Route path="/contact" element={<Contact />} />
