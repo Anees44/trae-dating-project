@@ -1,26 +1,24 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import './Settings.css';
-
-const API_PROFILE = import.meta.env.VITE_API_PROFILE;
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import './Settings.css'
 
 function Settings() {
-  const navigate = useNavigate();
-  const [isVisible, setIsVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState('profile');
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const navigate = useNavigate()
+  const [isVisible, setIsVisible] = useState(false)
+  const [activeTab, setActiveTab] = useState('profile')
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
+  // Form States
   const [profileData, setProfileData] = useState({
     fullName: '',
     email: '',
     phone: '',
     dateOfBirth: '',
     gender: ''
-  });
+  })
 
   const [privacySettings, setPrivacySettings] = useState({
     showProfile: true,
@@ -28,13 +26,13 @@ function Settings() {
     showContact: false,
     allowMessages: true,
     showLastSeen: true
-  });
+  })
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
-  });
+  })
 
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
@@ -42,87 +40,68 @@ function Settings() {
     messages: true,
     interests: true,
     promotions: false
-  });
+  })
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return navigate('/login');
-
-    const fetchUserData = async () => {
-      try {
-        const res = await axios.get(API_PROFILE, { headers: { Authorization: `Bearer ${token}` } });
-        setProfileData(res.data.profile);
-        setPrivacySettings(res.data.privacySettings);
-        setNotificationSettings(res.data.notificationSettings);
-        setTimeout(() => setIsVisible(true), 100);
-      } catch {
-        navigate('/login');
-      }
-    };
-
-    fetchUserData();
-  }, [navigate]);
-
-  const triggerSuccess = () => {
-    setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
-  };
-
-  const handleProfileUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('token');
-      const res = await axios.put(`${API_PROFILE}/update`, profileData, { headers: { Authorization: `Bearer ${token}` } });
-      setProfileData(res.data.profile);
-      triggerSuccess();
-    } catch {
-      alert('Failed to update profile');
+    const token = localStorage.getItem('token')
+    if (!token) {
+      navigate('/login')
     }
-  };
+    
+    // Load user data here from your API
+    // For now, using placeholder data
+    setProfileData({
+      fullName: 'John Doe',
+      email: 'john@example.com',
+      phone: '+92 300 1234567',
+      dateOfBirth: '1995-01-15',
+      gender: 'male'
+    })
+    
+    setTimeout(() => setIsVisible(true), 100)
+  }, [navigate])
 
-  const handlePasswordChange = async (e) => {
-    e.preventDefault();
-    if (passwordData.newPassword !== passwordData.confirmPassword) return alert('Passwords do not match!');
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(`${API_PROFILE}/password`, { currentPassword: passwordData.currentPassword, newPassword: passwordData.newPassword }, { headers: { Authorization: `Bearer ${token}` } });
-      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      triggerSuccess();
-    } catch {
-      alert('Failed to update password');
-    }
-  };
+  const handleProfileUpdate = (e) => {
+    e.preventDefault()
+    // Add your API call here to update profile
+    console.log('Updating profile:', profileData)
+    setShowSuccessMessage(true)
+    setTimeout(() => setShowSuccessMessage(false), 3000)
+  }
 
-  const handlePrivacyUpdate = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(`${API_PROFILE}/privacy`, privacySettings, { headers: { Authorization: `Bearer ${token}` } });
-      triggerSuccess();
-    } catch {
-      alert('Failed to update privacy settings');
+  const handlePasswordChange = (e) => {
+    e.preventDefault()
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert('Passwords do not match!')
+      return
     }
-  };
+    // Add your API call here to change password
+    console.log('Changing password')
+    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
+    setShowSuccessMessage(true)
+    setTimeout(() => setShowSuccessMessage(false), 3000)
+  }
 
-  const handleNotificationUpdate = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(`${API_PROFILE}/notifications`, notificationSettings, { headers: { Authorization: `Bearer ${token}` } });
-      triggerSuccess();
-    } catch {
-      alert('Failed to update notification settings');
-    }
-  };
+  const handlePrivacyUpdate = () => {
+    // Add your API call here to update privacy settings
+    console.log('Updating privacy settings:', privacySettings)
+    setShowSuccessMessage(true)
+    setTimeout(() => setShowSuccessMessage(false), 3000)
+  }
 
-  const handleDeleteAccount = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.delete(API_PROFILE, { headers: { Authorization: `Bearer ${token}` } });
-      localStorage.removeItem('token');
-      navigate('/login');
-    } catch {
-      alert('Failed to delete account');
-    }
-  };
+  const handleNotificationUpdate = () => {
+    // Add your API call here to update notification settings
+    console.log('Updating notification settings:', notificationSettings)
+    setShowSuccessMessage(true)
+    setTimeout(() => setShowSuccessMessage(false), 3000)
+  }
+
+  const handleDeleteAccount = () => {
+    // Add your API call here to delete account
+    console.log('Deleting account')
+    localStorage.removeItem('token')
+    navigate('/login')
+  }
 
   const tabs = [
     { id: 'profile', name: 'Profile Info', icon: '👤' },
@@ -130,125 +109,483 @@ function Settings() {
     { id: 'privacy', name: 'Privacy', icon: '🛡️' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
     { id: 'danger', name: 'Account', icon: '⚠️' }
-  ];
+  ]
 
   return (
     <div className="settings-page">
       <Navbar />
-      <main className={`settings-main ${isVisible ? 'visible' : ''}`}>
-        <header className="settings-header">
-          <h1>Account Settings</h1>
-          <p>Manage your account preferences and security</p>
-        </header>
 
+      <main className="settings-main">
+        {/* Header */}
+        <div className={`settings-header ${isVisible ? 'visible' : ''}`}>
+          <div className="header-bg-circle circle-1"></div>
+          <div className="header-bg-circle circle-2"></div>
+          
+          <div className="header-content">
+            <h1>Account Settings</h1>
+            <p>Manage your account preferences and security</p>
+          </div>
+        </div>
+
+        {/* Success Message */}
         {showSuccessMessage && (
           <div className="success-message">
-            <span>✔</span>
-            <p>Settings updated successfully!</p>
+            <div className="success-content">
+              <svg className="success-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <p>Settings updated successfully!</p>
+            </div>
           </div>
         )}
 
+        {/* Settings Container */}
         <div className="settings-container">
-          <aside className="settings-sidebar">
-            {tabs.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={activeTab === tab.id ? 'active' : ''}>
-                <span>{tab.icon}</span> {tab.name}
-              </button>
-            ))}
-          </aside>
+          {/* Sidebar Tabs */}
+          <div className={`settings-sidebar ${isVisible ? 'visible' : ''}`}>
+            <div className="sidebar-inner">
+              <nav className="sidebar-nav">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+                  >
+                    <span className="tab-icon">{tab.icon}</span>
+                    <span className="tab-name">{tab.name}</span>
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </div>
 
-          <section className="settings-content">
-            {activeTab === 'profile' && (
-              <form onSubmit={handleProfileUpdate} className="settings-form">
-                <h2>Personal Information</h2>
-                <div className="form-grid">
-                  {['fullName', 'email', 'phone', 'dateOfBirth'].map(field => (
-                    <label key={field}>
-                      {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                      <input
-                        type={field === 'email' ? 'email' : field === 'phone' ? 'tel' : field === 'dateOfBirth' ? 'date' : 'text'}
-                        value={profileData[field]}
-                        onChange={e => setProfileData({ ...profileData, [field]: e.target.value })}
-                      />
-                    </label>
-                  ))}
-                  <label>
-                    Gender
-                    <select value={profileData.gender} onChange={e => setProfileData({ ...profileData, gender: e.target.value })}>
-                      <option value="">Select Gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </label>
+          {/* Content Area */}
+          <div className={`settings-content ${isVisible ? 'visible' : ''}`}>
+            <div className="content-card">
+              
+              {/* Profile Info Tab */}
+              {activeTab === 'profile' && (
+                <div className="tab-content">
+                  <h2 className="tab-title">
+                    <span className="title-icon">👤</span>
+                    Personal Information
+                  </h2>
+                  <form onSubmit={handleProfileUpdate} className="settings-form">
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label>Full Name</label>
+                        <input
+                          type="text"
+                          value={profileData.fullName}
+                          onChange={(e) => setProfileData({...profileData, fullName: e.target.value})}
+                          placeholder="Enter your full name"
+                        />
+                      </div>
+                      
+                      <div className="form-group">
+                        <label>Email Address</label>
+                        <input
+                          type="email"
+                          value={profileData.email}
+                          onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                          placeholder="your@email.com"
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Phone Number</label>
+                        <input
+                          type="tel"
+                          value={profileData.phone}
+                          onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                          placeholder="+92 300 1234567"
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Date of Birth</label>
+                        <input
+                          type="date"
+                          value={profileData.dateOfBirth}
+                          onChange={(e) => setProfileData({...profileData, dateOfBirth: e.target.value})}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Gender</label>
+                        <select
+                          value={profileData.gender}
+                          onChange={(e) => setProfileData({...profileData, gender: e.target.value})}
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="submit" className="btn-primary">
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
                 </div>
-                <button type="submit">Save Changes</button>
-              </form>
-            )}
+              )}
 
-            {activeTab === 'password' && (
-              <form onSubmit={handlePasswordChange} className="settings-form">
-                <h2>Change Password</h2>
-                {['currentPassword', 'newPassword', 'confirmPassword'].map(field => (
-                  <label key={field}>
-                    {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                    <input
-                      type="password"
-                      value={passwordData[field]}
-                      onChange={e => setPasswordData({ ...passwordData, [field]: e.target.value })}
-                    />
-                  </label>
-                ))}
-                <button type="submit">Update Password</button>
-              </form>
-            )}
+              {/* Password Tab */}
+              {activeTab === 'password' && (
+                <div className="tab-content">
+                  <h2 className="tab-title">
+                    <span className="title-icon">🔒</span>
+                    Change Password
+                  </h2>
+                  <form onSubmit={handlePasswordChange} className="settings-form password-form">
+                    <div className="form-group">
+                      <label>Current Password</label>
+                      <input
+                        type="password"
+                        value={passwordData.currentPassword}
+                        onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                        placeholder="Enter current password"
+                        required
+                      />
+                    </div>
 
-            {activeTab === 'privacy' && (
-              <div className="settings-form">
-                <h2>Privacy Settings</h2>
-                {Object.keys(privacySettings).map(key => (
-                  <label key={key}>
-                    <input type="checkbox" checked={privacySettings[key]} onChange={e => setPrivacySettings({ ...privacySettings, [key]: e.target.checked })} />
-                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                  </label>
-                ))}
-                <button onClick={handlePrivacyUpdate}>Save Privacy Settings</button>
-              </div>
-            )}
+                    <div className="form-group">
+                      <label>New Password</label>
+                      <input
+                        type="password"
+                        value={passwordData.newPassword}
+                        onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                        placeholder="Enter new password"
+                        required
+                      />
+                    </div>
 
-            {activeTab === 'notifications' && (
-              <div className="settings-form">
-                <h2>Notification Preferences</h2>
-                {Object.keys(notificationSettings).map(key => (
-                  <label key={key}>
-                    <input type="checkbox" checked={notificationSettings[key]} onChange={e => setNotificationSettings({ ...notificationSettings, [key]: e.target.checked })} />
-                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                  </label>
-                ))}
-                <button onClick={handleNotificationUpdate}>Save Notification Settings</button>
-              </div>
-            )}
+                    <div className="form-group">
+                      <label>Confirm New Password</label>
+                      <input
+                        type="password"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                        placeholder="Confirm new password"
+                        required
+                      />
+                    </div>
 
-            {activeTab === 'danger' && (
-              <div className="settings-form">
-                <h2>Danger Zone</h2>
-                <button onClick={() => setShowDeleteConfirm(true)}>Delete Account</button>
-                {showDeleteConfirm && (
-                  <div className="modal">
-                    <div>
-                      <p>Are you sure you want to delete your account?</p>
-                      <button onClick={handleDeleteAccount}>Yes, Delete</button>
-                      <button onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
+                    <div className="info-box">
+                      <p>
+                        <strong>Password Requirements:</strong> Minimum 8 characters, at least one uppercase letter, one number, and one special character.
+                      </p>
+                    </div>
+
+                    <button type="submit" className="btn-primary full-width">
+                      Update Password
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {/* Privacy Tab */}
+              {activeTab === 'privacy' && (
+                <div className="tab-content">
+                  <h2 className="tab-title">
+                    <span className="title-icon">🛡️</span>
+                    Privacy Settings
+                  </h2>
+                  <div className="privacy-sections">
+                    <div className="privacy-section purple">
+                      <h3>Profile Visibility</h3>
+                      <div className="privacy-options">
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">👁️</div>
+                            <div>
+                              <p className="option-title">Show My Profile</p>
+                              <p className="option-desc">Allow others to view your profile</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={privacySettings.showProfile}
+                              onChange={(e) => setPrivacySettings({...privacySettings, showProfile: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">📸</div>
+                            <div>
+                              <p className="option-title">Show Photos</p>
+                              <p className="option-desc">Display your photos to visitors</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={privacySettings.showPhotos}
+                              onChange={(e) => setPrivacySettings({...privacySettings, showPhotos: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">📞</div>
+                            <div>
+                              <p className="option-title">Show Contact Info</p>
+                              <p className="option-desc">Share phone number with matches</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={privacySettings.showContact}
+                              onChange={(e) => setPrivacySettings({...privacySettings, showContact: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="privacy-section blue">
+                      <h3>Communication</h3>
+                      <div className="privacy-options">
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">💬</div>
+                            <div>
+                              <p className="option-title">Allow Messages</p>
+                              <p className="option-desc">Receive messages from matches</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={privacySettings.allowMessages}
+                              onChange={(e) => setPrivacySettings({...privacySettings, allowMessages: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">🕐</div>
+                            <div>
+                              <p className="option-title">Show Last Seen</p>
+                              <p className="option-desc">Let others see when you were active</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={privacySettings.showLastSeen}
+                              onChange={(e) => setPrivacySettings({...privacySettings, showLastSeen: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="form-actions">
+                      <button onClick={handlePrivacyUpdate} className="btn-primary">
+                        Save Privacy Settings
+                      </button>
                     </div>
                   </div>
-                )}
-              </div>
-            )}
-          </section>
+                </div>
+              )}
+
+              {/* Notifications Tab */}
+              {activeTab === 'notifications' && (
+                <div className="tab-content">
+                  <h2 className="tab-title">
+                    <span className="title-icon">🔔</span>
+                    Notification Preferences
+                  </h2>
+                  <div className="privacy-sections">
+                    <div className="privacy-section amber">
+                      <h3>Email Notifications</h3>
+                      <div className="privacy-options">
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">📧</div>
+                            <div>
+                              <p className="option-title">Enable Email Notifications</p>
+                              <p className="option-desc">Receive updates via email</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={notificationSettings.emailNotifications}
+                              onChange={(e) => setNotificationSettings({...notificationSettings, emailNotifications: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">💝</div>
+                            <div>
+                              <p className="option-title">New Matches</p>
+                              <p className="option-desc">Get notified about new matches</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={notificationSettings.newMatches}
+                              onChange={(e) => setNotificationSettings({...notificationSettings, newMatches: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">💬</div>
+                            <div>
+                              <p className="option-title">Messages</p>
+                              <p className="option-desc">Alert for new messages</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={notificationSettings.messages}
+                              onChange={(e) => setNotificationSettings({...notificationSettings, messages: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">⭐</div>
+                            <div>
+                              <p className="option-title">Interests</p>
+                              <p className="option-desc">When someone shows interest</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={notificationSettings.interests}
+                              onChange={(e) => setNotificationSettings({...notificationSettings, interests: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+
+                        <label className="toggle-option">
+                          <div className="option-info">
+                            <div className="option-icon">🎁</div>
+                            <div>
+                              <p className="option-title">Promotions</p>
+                              <p className="option-desc">Special offers and updates</p>
+                            </div>
+                          </div>
+                          <div className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={notificationSettings.promotions}
+                              onChange={(e) => setNotificationSettings({...notificationSettings, promotions: e.target.checked})}
+                            />
+                            <span className="toggle-slider"></span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="form-actions">
+                      <button onClick={handleNotificationUpdate} className="btn-primary">
+                        Save Notification Settings
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Danger Zone Tab */}
+              {activeTab === 'danger' && (
+                <div className="tab-content">
+                  <h2 className="tab-title">
+                    <span className="title-icon">⚠️</span>
+                    Danger Zone
+                  </h2>
+                  <div className="danger-sections">
+                    <div className="danger-section red">
+                      <h3>Delete Account</h3>
+                      <p>
+                        Once you delete your account, there is no going back. This action will permanently remove your profile, messages, and all associated data.
+                      </p>
+                      <ul>
+                        <li>All your profile information will be deleted</li>
+                        <li>Your matches and conversations will be lost</li>
+                        <li>You won't be able to recover your account</li>
+                        <li>Other users won't be able to see your profile</li>
+                      </ul>
+                      <button onClick={() => setShowDeleteConfirm(true)} className="btn-danger">
+                        Delete My Account
+                      </button>
+                    </div>
+
+                    <div className="danger-section yellow">
+                      <h3>Deactivate Account</h3>
+                      <p>
+                        Temporarily hide your profile from others. You can reactivate anytime.
+                      </p>
+                      <button className="btn-warning">
+                        Deactivate Account
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="modal-header">
+                <div className="modal-icon">⚠️</div>
+                <h3>Delete Account?</h3>
+                <p>
+                  This action cannot be undone. All your data will be permanently removed.
+                </p>
+              </div>
+              <div className="modal-actions">
+                <button onClick={() => setShowDeleteConfirm(false)} className="btn-secondary">
+                  Cancel
+                </button>
+                <button onClick={handleDeleteAccount} className="btn-danger">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </main>
+
+      <Footer />
     </div>
-  );
+  )
 }
 
-export default Settings;
+export default Settings
