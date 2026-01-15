@@ -19,10 +19,7 @@ function Register() {
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e) => {
@@ -58,10 +55,10 @@ function Register() {
       )
 
       localStorage.setItem('token', res.data.token)
-      setSuccess('Account created successfully! Redirecting...')
+      setSuccess('Account created successfully! Please create your profile first.')
 
       setTimeout(() => {
-        navigate('/dashboard')
+        navigate('/profile') // direct user to profile creation
       }, 1500)
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed, please try again')
