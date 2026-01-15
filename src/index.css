@@ -1,5 +1,38 @@
-*{
-  margin: 0%;
-  padding: 0%;
-  box-sizing: border-box;
+/* Global styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  color: #1f2937; /* gray-900 */
+}
+
+.main-content {
+  flex-grow: 1;
+}
+
+/* Dark mode */
+.dark-mode .app-container {
+  background-color: #111827; /* gray-900 */
+  color: #f3f4f6; /* gray-100 */
+}
+
+/* 404 page */
+.page-404 {
+  padding: 80px 20px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* Smooth transition for all elements */
+* {
+  transition: all 0.3s ease;
 }
