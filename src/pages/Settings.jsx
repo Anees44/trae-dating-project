@@ -40,24 +40,11 @@ function Settings() {
           gender: res.data.gender || ''
         })
       } catch (err) {
-        // If profile not found, create an empty one
         if (err.response?.status === 404) {
-          const emptyProfile = {
-            fullName: '',
-            email: '',
-            phone: '',
-            dateOfBirth: '',
-            gender: ''
-          }
+          const emptyProfile = { fullName: '', email: '', phone: '', dateOfBirth: '', gender: '' }
           await axios.post(`${API_PROFILE}`, emptyProfile, axiosConfig)
           const newProfile = await axios.get(`${API_PROFILE}/me`, axiosConfig)
-          setProfileData({
-            fullName: newProfile.data.fullName || '',
-            email: newProfile.data.email || '',
-            phone: newProfile.data.phone || '',
-            dateOfBirth: newProfile.data.dateOfBirth?.split('T')[0] || '',
-            gender: newProfile.data.gender || ''
-          })
+          setProfileData(newProfile.data)
         } else {
           localStorage.removeItem('token')
           navigate('/login')
@@ -95,17 +82,6 @@ function Settings() {
     }
   }
 
-  const handleEmailChange = async (newEmail) => {
-    try {
-      const res = await axios.put(`${API_PROFILE}/change-email`, { newEmail }, axiosConfig)
-      setProfileData(prev => ({ ...prev, email: res.data.email }))
-      setShowSuccessMessage(true)
-      setTimeout(() => setShowSuccessMessage(false), 3000)
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to change email')
-    }
-  }
-
   const handleDeleteAccount = async () => {
     if (!window.confirm('Are you sure you want to delete your account?')) return
     try {
@@ -117,12 +93,6 @@ function Settings() {
     }
   }
 
-  const tabs = [
-    { id: 'profile', name: 'Profile' },
-    { id: 'password', name: 'Password' },
-    { id: 'danger', name: 'Account' }
-  ]
-
   return (
     <div className="settings-page">
       <Navbar />
@@ -130,9 +100,13 @@ function Settings() {
 
       <div className="settings-container">
         <div className="settings-sidebar">
-          {tabs.map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={activeTab === tab.id ? 'active' : ''}>
-              {tab.name}
+          {['profile', 'password', 'danger'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={activeTab === tab ? 'active' : ''}
+            >
+              {tab === 'profile' ? 'Profile' : tab === 'password' ? 'Password' : 'Account'}
             </button>
           ))}
         </div>

@@ -10,9 +10,7 @@ function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-    }
+    if (!token) navigate('/login');
     setTimeout(() => setIsVisible(true), 100);
   }, [navigate]);
 
@@ -67,8 +65,8 @@ function Dashboard() {
             <div className="card-cta">Open Messages</div>
           </Link>
 
-          <Link to="/Settings" className={`card group ${isVisible ? 'visible' : ''} delay-4`}>
-            <div className="card-icon profile-icon">
+          <Link to="/settings" className={`card group ${isVisible ? 'visible' : ''} delay-4`}>
+            <div className="card-icon settings-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v2m6.364 1.636l-1.414 1.414M20 12h-2M17.364 17.364l-1.414-1.414M12 20v-2M6.636 17.364l1.414-1.414M4 12h2M6.636 6.636l1.414 1.414" />
               </svg>

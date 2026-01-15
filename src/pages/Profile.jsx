@@ -79,7 +79,7 @@ function Profile() {
       setMessage({ type: 'error', text: 'Age must be 18 or above.' })
       return
     }
-
+    if (formData.age === '') formData.age = null
     if (name === 'isMuslim') {
       setFormData({ ...formData, isMuslim: checked, sect: '' }) // reset sect if religion changes
       return
@@ -186,7 +186,17 @@ function Profile() {
           </div>
 
           <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name" required className="profile-input" />
-          <input type="number" name="age" value={formData.age} onChange={handleChange} placeholder="Age" required className="profile-input" />
+          <input
+            type="number"
+            name="age"
+            value={formData.age || ''}
+            onChange={(e) =>
+              setFormData({ ...formData, age: e.target.value ? parseInt(e.target.value) : '' })
+            }
+            placeholder="Age"
+            className="profile-input"
+          />
+
 
           <select name="gender" value={formData.gender} onChange={handleChange} required className="profile-input">
             <option value="">Select Gender</option>
