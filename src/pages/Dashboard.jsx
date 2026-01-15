@@ -34,7 +34,6 @@ function Dashboard() {
         </section>
 
         <div className="dashboard-cards">
-          {/* My Profile Card */}
           <Link to="/profile" className={`card group ${isVisible ? 'visible' : ''} delay-1`}>
             <div className="card-icon profile-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,7 +45,6 @@ function Dashboard() {
             <div className="card-cta">View Profile</div>
           </Link>
 
-          {/* Find Matches Card */}
           <Link to="/matches" className={`card group ${isVisible ? 'visible' : ''} delay-2`}>
             <div className="card-icon matches-icon">
               <svg fill="currentColor" viewBox="0 0 24 24">
@@ -58,7 +56,6 @@ function Dashboard() {
             <div className="card-cta">Explore Matches</div>
           </Link>
 
-          {/* Messages Card */}
           <Link to="/messages" className={`card group ${isVisible ? 'visible' : ''} delay-3`}>
             <div className="card-icon messages-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +67,16 @@ function Dashboard() {
             <div className="card-cta">Open Messages</div>
           </Link>
 
-          {/* Add other cards in same pattern... */}
+          <Link to="/account-settings" className={`card group ${isVisible ? 'visible' : ''} delay-4`}>
+            <div className="card-icon profile-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v2m6.364 1.636l-1.414 1.414M20 12h-2M17.364 17.364l-1.414-1.414M12 20v-2M6.636 17.364l1.414-1.414M4 12h2M6.636 6.636l1.414 1.414" />
+              </svg>
+            </div>
+            <h3>Account Settings</h3>
+            <p>Update your account preferences, email, and password.</p>
+            <div className="card-cta">Manage Account</div>
+          </Link>
         </div>
       </main>
 
