@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import './Profile.css'
 
+const API_BASE = import.meta.env.VITE_API // e.g., http://localhost:5000
+
 function Profile() {
   const navigate = useNavigate()
-
   const [isVisible, setIsVisible] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     gender: '',
@@ -24,52 +26,60 @@ function Profile() {
     height: '',
     profession: ''
   })
-  
+
   const [profileImage, setProfileImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
 
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
+  const token = localStorage.getItem('token')
+
+  let currentUserId = null
+  if (token) {
+    try {
+      currentUserId = JSON.parse(atob(token.split('.')[1])).id
+    } catch {
+      localStorage.removeItem('token')
       navigate('/login')
-      return
     }
-    
-    // Fetch existing profile
+  } else {
+    navigate('/login')
+  }
+
+  useEffect(() => {
+    if (!token) return
     fetchProfile()
     setTimeout(() => setIsVisible(true), 100)
-  }, [navigate])
+  }, [token])
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:5000/api/profile', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const res = await fetch(`${API_BASE}/api/profiles/me`, {
+        headers: { Authorization: `Bearer ${token}` }
       })
-      
-      if (response.ok) {
-        const data = await response.json()
-        if (data) {
-          setFormData({
-            fullName: data.fullName || '',
-            gender: data.gender || '',
-            age: data.age || '',
-            isMuslim: data.isMuslim ?? true,
-            sect: data.sect || '',
-            city: data.city || '',
-            education: data.education || '',
-            interests: data.interests || '',
-            about: data.about || '',
-            height: data.height || '',
-            profession: data.profession || ''
-          })
 
-          if (data.image) {
-            setImagePreview(data.image)
-          }
-        }
+      if (!res.ok) {
+        const text = await res.text()
+        console.error('Fetch profile failed:', res.status, text)
+        setMessage({ type: 'error', text: 'Failed to load profile.' })
+        return
+      }
+
+      const data = await res.json()
+      if (data) {
+        setFormData({
+          fullName: data.fullName || '',
+          gender: data.gender || '',
+          age: data.age || '',
+          isMuslim: data.isMuslim ?? true,
+          sect: data.sect || '',
+          city: data.city || '',
+          education: data.education || '',
+          interests: data.interests || '',
+          about: data.about || '',
+          height: data.height || '',
+          profession: data.profession || ''
+        })
+
+        if (data.image) setImagePreview(data.image)
       }
     } catch (err) {
       console.error('Error fetching profile:', err)
@@ -79,7 +89,7 @@ function Profile() {
     }
   }
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value, type, checked } = e.target
 
     if (name === 'age' && value < 18 && value !== '') {
@@ -94,77 +104,58 @@ function Profile() {
 
     setFormData({ ...formData, [name]: value })
   }
-  
-  const handleImageChange = (e) => {
+
+  const handleImageChange = e => {
     const file = e.target.files[0]
-    if (file) {
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setMessage({ type: 'error', text: 'Image size should be less than 5MB' })
-        return
-      }
-      
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setMessage({ type: 'error', text: 'Please upload an image file' })
-        return
-      }
-      
-      setProfileImage(file)
-      
-      // Create preview
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result)
-      }
-      reader.readAsDataURL(file)
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please upload an image file' })
+      return
     }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image size should be less than 5MB' })
+      return
+    }
+
+    setProfileImage(file)
+    const reader = new FileReader()
+    reader.onloadend = () => setImagePreview(reader.result)
+    reader.readAsDataURL(file)
   }
-  
+
   const removeImage = () => {
     setProfileImage(null)
     setImagePreview(null)
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault()
     setSaving(true)
     setMessage({ type: '', text: '' })
 
     try {
-      const token = localStorage.getItem('token')
-      
-      // Create FormData for file upload
       const submitData = new FormData()
+      Object.entries(formData).forEach(([key, value]) => submitData.append(key, value))
+      if (profileImage) submitData.append('image', profileImage)
 
-      Object.entries(formData).forEach(([key, value]) => {
-        submitData.append(key, value)
-      })
-      
-      if (profileImage) {
-        submitData.append('image', profileImage)
-      }
-
-      const response = await fetch('http://localhost:5000/api/profile', {
+      const res = await fetch(`${API_BASE}/api/profiles`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: submitData
       })
 
-      const data = await response.json()
+      const data = await res.json()
 
-      if (response.ok) {
+      if (res.ok) {
         setMessage({ type: 'success', text: 'Profile saved successfully! ✓' })
-        setTimeout(() => {
-          navigate('/dashboard')
-        }, 2000)
+        setTimeout(() => navigate('/dashboard'), 2000)
       } else {
         setMessage({ type: 'error', text: data.message || 'Failed to save profile' })
       }
-    } catch (error) {
-      console.error('Error saving profile:', error)
+    } catch (err) {
+      console.error('Error saving profile:', err)
       setMessage({ type: 'error', text: 'An error occurred. Please try again.' })
     } finally {
       setSaving(false)
