@@ -7,11 +7,7 @@ import './Login.css'
 function Login() {
   const navigate = useNavigate()
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  })
-
+  const [formData, setFormData] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
@@ -49,8 +45,20 @@ function Login() {
     try {
       const res = await axios.post(import.meta.env.VITE_API_LOGIN, formData)
       localStorage.setItem('token', res.data.token)
-      setSuccess('Login successful. Redirecting...')
-      setTimeout(() => navigate('/dashboard'), 1200)
+      setSuccess('Login successful!')
+
+      // Check if profile exists
+      const profileRes = await axios.get(`${import.meta.env.VITE_API_PROFILE}/me`, {
+        headers: { Authorization: `Bearer ${res.data.token}` }
+      })
+
+      if (!profileRes.data) {
+        setSuccess('Please create your profile first!')
+        setTimeout(() => navigate('/profile'), 1200)
+      } else {
+        setTimeout(() => navigate('/dashboard'), 1200)
+      }
+
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid credentials. Please try again.')
     } finally {
@@ -103,7 +111,6 @@ function Login() {
           </form>
         </div>
       </div>
-
       <Footer />
     </div>
   )
