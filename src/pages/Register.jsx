@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import Footer from '../components/Footer'
 import './Register.css'
 
 function Register() {
@@ -27,6 +26,7 @@ function Register() {
     setError('')
     setSuccess('')
 
+    // Basic validation
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('All fields are required')
       return
@@ -51,17 +51,30 @@ function Register() {
           name: formData.name,
           email: formData.email,
           password: formData.password
+        },
+        {
+          headers: { 'Content-Type': 'application/json' }
         }
       )
 
+      // Save token in localStorage
       localStorage.setItem('token', res.data.token)
-      setSuccess('Account created successfully! Please create your profile first.')
 
+      setSuccess('Account created successfully! Please complete your profile.')
+
+      // Redirect to profile creation after short delay
       setTimeout(() => {
-        navigate('/profile') // direct user to profile creation
-      }, 1500)
+        navigate('/profile')
+      }, 1200)
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed, please try again')
+      // Handle network or server errors
+      if (err.response) {
+        setError(err.response.data.message || 'Registration failed.')
+      } else if (err.request) {
+        setError('Server did not respond. Please try again later.')
+      } else {
+        setError('An error occurred. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
@@ -71,7 +84,6 @@ function Register() {
     <div className="register-page">
       <div className="register-wrapper">
         <form onSubmit={handleSubmit} className="register-form">
-
           <h2>Create Your Account</h2>
           <p className="subtitle">
             Start your journey with a secure and personalized profile
@@ -120,13 +132,10 @@ function Register() {
           </button>
 
           <p className="login-link">
-            Already have an account?{' '}
-            <Link to="/login">Login</Link>
+            Already have an account? <Link to="/login">Login</Link>
           </p>
-
         </form>
       </div>
-
     </div>
   )
 }
