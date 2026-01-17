@@ -1,0 +1,86 @@
+.about {
+  padding: 80px 20px;
+  background: #f9fafb; /* light professional background */
+  color: #1f2937; /* dark slate for readability */
+}
+
+.about-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.about-text {
+  flex: 1 1 500px;
+}
+
+.about-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #111827; /* darker for emphasis */
+}
+
+.about-description {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  color: #374151; /* modern gray */
+}
+
+.about-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.about-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.about-feature svg {
+  width: 20px;
+  height: 20px;
+  color: #4f46e5; /* professional accent color */
+}
+
+.about-image {
+  flex: 1 1 300px; /* smaller base size */
+  display: flex;
+  justify-content: center;
+}
+
+.about-image img {
+  max-width: 100%;
+  height: 350px; /* fixed max height */
+  object-fit: cover; /* maintain aspect ratio and crop if needed */
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.about-image img:hover {
+  transform: scale(1.05); /* subtle zoom on hover */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .about-title { font-size: 28px; }
+  .about-description { font-size: 15px; }
+  .about-container { flex-direction: column-reverse; gap: 30px; }
+  .about-image img { height: 300px; }
+}
+
+@media (max-width: 480px) {
+  .about-title { font-size: 24px; }
+  .about-description { font-size: 14px; }
+  .about-image img { height: 220px; }
+}

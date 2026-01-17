@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
-import Testimonials from "./components/Testimonials";
+// import Testimonials from "./components/Testimonials";
 import Footer from "./components/Footer";
 
 import Login from "./pages/Login";
@@ -13,10 +13,11 @@ import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard.jsx";
 import Profile from "./pages/Profile";
 import Matches from './pages/Matches'
-import Messages from './pages/Messages'  
+import Messages from './pages/Messages'
 import Settings from './pages/Settings.jsx'
 
 import './index.css'; // Import plain CSS
+import About from "./components/About.jsx";
 
 function App() {
   const [dark, setDark] = useState(false);
@@ -41,8 +42,9 @@ function App() {
               element={
                 <>
                   <Hero />
+                  <About />
                   <Features />
-                  <Testimonials />
+                  <Contact />
                 </>
               }
             />
@@ -55,12 +57,12 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/matches" element={<Matches />} />
-            <Route path="/messages" element={<Messages />} /> 
-            <Route path="/settings" element={<Settings />} /> 
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/settings" element={<Settings />} />
 
             {/* Other pages */}
             <Route path="/contact" element={<Contact />} />
-            <Route path="/testimonials" element={<Testimonials />} />
+            {/* <Route path="/testimonials" element={<Testimonials />} /> */}
 
             {/* 404 fallback */}
             <Route
