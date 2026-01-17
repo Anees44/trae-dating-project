@@ -185,7 +185,7 @@ function Matches() {
           <div className="loading-spinner"></div>
           <p>Loading matches...</p>
         </div>
-        <Footer />
+       
       </div>
     )
   }
