@@ -1,11 +1,15 @@
-
-
-/* Global styles */
-body, html {
+/* ========================
+   Global Styles
+   ======================== */
+body,
+html {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
   transition: background-color 0.3s, color 0.3s;
+  width: 100%;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
 }
 
 .app-container {
@@ -13,20 +17,27 @@ body, html {
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
-  color: #1f2937; /* gray-900 */
+  color: #1f2937;
+  /* gray-900 */
 }
 
 .main-content {
   flex-grow: 1;
 }
 
-/* Dark mode */
+/* ========================
+   Dark Mode
+   ======================== */
 .dark-mode .app-container {
-  background-color: #111827; /* gray-900 */
-  color: #f3f4f6; /* gray-100 */
+  background-color: #111827;
+  /* gray-900 */
+  color: #f3f4f6;
+  /* gray-100 */
 }
 
-/* 404 page */
+/* ========================
+   404 Page
+   ======================== */
 .page-404 {
   padding: 80px 20px;
   text-align: center;
@@ -34,7 +45,85 @@ body, html {
   font-weight: 600;
 }
 
-/* Smooth transition for all elements */
+/* ========================
+   Smooth Transition
+   ======================== */
 * {
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  /* Ensure padding and border included in width */
+}
+
+/* ========================
+   Global Containers & Responsiveness
+   ======================== */
+.container,
+.features-container,
+.about-container,
+.contact-form-card,
+.footer-container,
+.hero-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 16px;
+  /* safe padding on mobile */
+}
+
+/* Prevent horizontal overflow for all cards & sections */
+.feature-card,
+.contact-form-card,
+.footer-brand,
+.hero-content,
+.about-card {
+  max-width: 100%;
+}
+
+/* Flex layouts wrap properly on mobile */
+.features-grid,
+.form-row,
+.about-grid,
+.footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Images responsive */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Inputs and buttons box sizing */
+input,
+textarea,
+button {
+  box-sizing: border-box;
+}
+
+/* Hero image adjustments */
+.hero-section img,
+.hero-section {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* ========================
+   Media Queries (Optional Extra Safety)
+   ======================== */
+@media (max-width: 768px) {
+
+  .features-grid,
+  .form-row,
+  .about-grid,
+  .footer-top {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .app-container {
+    padding: 0;
+  }
 }
