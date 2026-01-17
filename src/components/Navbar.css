@@ -154,12 +154,14 @@
   left: 0;
 
   /* 🎨 Light Professional Gradient */
-  background: linear-gradient(
-    135deg,
-    #6dd5ed,   /* soft cyan */
-    #ffffff,   /* white */
-    #fbc2eb    /* light pink */
-  );
+  background: linear-gradient(135deg,
+      #6dd5ed,
+      /* soft cyan */
+      #ffffff,
+      /* white */
+      #fbc2eb
+      /* light pink */
+    );
 
   color: #0f172a;
   z-index: 1000;
@@ -274,6 +276,7 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+
   .navbar-links,
   .navbar-actions {
     display: none;
@@ -286,12 +289,10 @@
   .mobile-menu {
     display: flex;
     flex-direction: column;
-    background: linear-gradient(
-      135deg,
-      #6dd5ed,
-      #ffffff,
-      #fbc2eb
-    );
+    background: linear-gradient(135deg,
+        #6dd5ed,
+        #ffffff,
+        #fbc2eb);
     position: absolute;
     width: 100%;
     top: 64px;
@@ -320,4 +321,3 @@
     font-size: 20px;
   }
 }
-

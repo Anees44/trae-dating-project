@@ -1,3 +1,72 @@
+/* ================================
+   GLOBAL RESET & MOBILE SCROLL FIX
+   ================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Make all containers responsive */
+.container, 
+.features-container, 
+.about-container, 
+.testimonials-container, 
+.contact-form-card, 
+.footer-container, 
+.hero-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 16px; /* safe padding on mobile */
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Flex layouts wrap properly on mobile */
+.features-grid, 
+.testimonials-grid, 
+.form-row, 
+.about-grid, 
+.footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Avoid elements overflowing horizontally */
+.feature-card,
+.testimonial-card,
+.contact-form-card,
+.footer-brand,
+.hero-content,
+.about-card {
+  max-width: 100%;
+}
+
+/* Optional: force box-sizing for inputs, textareas */
+input, textarea, button {
+  box-sizing: border-box;
+}
+
+/* Small tweak for hero image or background if needed */
+.hero-section img,
+.hero-section {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+
 /* Global styles */
 body, html {
   margin: 0;
