@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './NotificationBell.css';
+import './Notificationbell.css';
 
 const API_BASE = import.meta.env.VITE_API;
 
