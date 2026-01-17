@@ -144,7 +144,7 @@ function Matches() {
     }
   }
 
-  // View profile
+  // View profile My pro 
   const handleViewProfile = (match) => {
     setSelectedMatch(match)
     setShowProfileModal(true)
@@ -185,7 +185,6 @@ function Matches() {
           <div className="loading-spinner"></div>
           <p>Loading matches...</p>
         </div>
-        <Footer />
       </div>
     )
   }
