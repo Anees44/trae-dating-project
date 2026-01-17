@@ -82,7 +82,7 @@ import "./Hero.css";
 import heroImage from "../assests/hero-image.jpg"; // Islamic background image
 
 function Hero() {
-  const features = ["Verified Profiles", "Secure & Private", "24/7 Support"];
+  const features = ["Verified Profiles", "Secure Messaging", "24/7 Support"];
 
   return (
     <section
@@ -103,12 +103,12 @@ function Hero() {
           </span>
 
           <h1 className="hero-title">
-            <span>Find Your</span>
-            <span>Perfect Match</span>
+            <span>Where Faith</span>
+            <span>Meets Compatibility</span>
           </h1>
 
           <p className="hero-description">
-            Connect with Muslims worldwide in a safe, respectful, and verified community.
+           A trusted Islamic matchmaking platform designed to help Muslims connect safely, sincerely, and with purpose.
           </p>
 
           <div className="hero-cta">
