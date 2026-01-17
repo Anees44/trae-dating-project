@@ -144,7 +144,7 @@ function Matches() {
     }
   }
 
-  // View profile
+  // View profile My pro 
   const handleViewProfile = (match) => {
     setSelectedMatch(match)
     setShowProfileModal(true)
