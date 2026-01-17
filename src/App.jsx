@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import Navbar from "./components/Navbar";
@@ -6,6 +6,7 @@ import Hero from "./components/Hero";
 import Features from "./components/Features";
 // import Testimonials from "./components/Testimonials";
 import Footer from "./components/Footer";
+import NotificationBell from "./components/NotificationBell";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -78,6 +79,9 @@ function App() {
 
         {/* Footer always visible */}
         <Footer />
+
+        {/* Floating Notification Bell - Only show when logged in */}
+        <ConditionalNotificationBell />
       </div>
     </Router>
   );
