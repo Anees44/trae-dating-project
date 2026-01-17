@@ -5,7 +5,7 @@ import Footer from "../components/Footer"
 import "./Matches.css"
 
 // Use your environment variable OR fallback
-const API_URL = import.meta.env.VITE_API || 'http://new-backend-production-766f.up.railway.app/api'
+const API_URL = import.meta.env.VITE_API || 'http://localhost:5000/api'
 
 function Matches() {
   const navigate = useNavigate()
@@ -95,14 +95,14 @@ function Matches() {
 
       console.log('Sending interest to userId:', match.userId)
 
-      const response = await fetch(`${API_URL}/interests`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ to: match.userId })
-      })
+      const response = await fetch(`${API_URL}/interest/${match.userId}`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  }
+})
+
       
       const data = await response.json()
       
