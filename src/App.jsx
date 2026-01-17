@@ -1,20 +1,20 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Features from "./components/Features";
+import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/Hero.jsx";
+import Features from "./components/Features.jsx";
 // import Testimonials from "./components/Testimonials";
-import Footer from "./components/Footer";
+import Footer from "./components/Footer.jsx";
 import NotificationBell from "./components/Notificationbell.jsx";
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Contact from "./pages/Contact";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import Contact from "./pages/Contact.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
-import Profile from "./pages/Profile";
-import Matches from './pages/Matches'
-import Messages from './pages/Messages'
+import Profile from "./pages/Profile.jsx";
+import Matches from './pages/Matches.jsx'
+import Messages from './pages/Messages.jsx'
 import Settings from './pages/Settings.jsx'
 
 import './index.css'; // Import plain CSS
