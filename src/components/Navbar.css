@@ -240,6 +240,28 @@
   color: #0f172a;
   font-size: 18px;
 }
+/* 🔥 FORCE dashboard to be visible */
+.dashboard-link {
+  display: inline-flex !important;
+  align-items: center;
+  font-weight: 600;
+  color: #0d6efd;
+  white-space: nowrap;
+}
+
+/* 🔥 Desktop navbar links fix */
+.navbar-links {
+  display: flex !important;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 🔥 Make sure it's NOT hidden on desktop */
+@media (min-width: 768px) {
+  .navbar-links {
+    display: flex !important;
+  }
+}
 
 /* ===== BUTTONS ===== */
 .btn-login,
