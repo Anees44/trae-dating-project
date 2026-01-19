@@ -16,7 +16,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard-page">
-      <Navbar />
+     
 
       <main className="dashboard-content">
         <section className={`welcome-section ${isVisible ? 'visible' : ''}`}>

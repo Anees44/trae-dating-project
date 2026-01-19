@@ -151,10 +151,6 @@ function NotificationBell() {
     alert('Profile viewing coming soon!');
   };
 
-  // Don't show bell if no notifications
-  if (unreadCount === 0 && !showPanel) {
-    return null;
-  }
 
   return (
     <>

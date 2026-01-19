@@ -1,24 +1,58 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Features from "./components/Features";
+import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/Hero.jsx";
+import Features from "./components/Features.jsx";
 // import Testimonials from "./components/Testimonials";
-import Footer from "./components/Footer";
-import NotificationBell from "./components/Notificationbell.jsx";
+import Footer from "./components/Footer.jsx";
+import NotificationBell from "./components/NotificationBell.jsx";
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Contact from "./pages/Contact";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import Contact from "./pages/Contact.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
-import Profile from "./pages/Profile";
-import Matches from './pages/Matches'
-import Messages from './pages/Messages'
-import Settings from './pages/Settings.jsx'
+import Profile from "./pages/Profile.jsx";
+import Matches from './pages/Matches.jsx';
+import Messages from './pages/Messages.jsx';
+import Settings from './pages/Settings.jsx';
 
 import './index.css'; // Import plain CSS
 import About from "./components/About.jsx";
+
+// Component to conditionally show NotificationBell
+function ConditionalNotificationBell() {
+  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+    
+    // Optional: Listen for storage changes (login/logout in other tabs)
+    const handleStorageChange = () => {
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [location]); // Re-check when location changes
+  
+  // Pages where bell should NOT appear (public pages)
+  const hideBellOnPages = ['/', '/login', '/register', '/contact'];
+  
+  // Show bell only if:
+  // 1. User is logged in (has token)
+  // 2. NOT on public pages
+  const shouldShowBell = isLoggedIn && !hideBellOnPages.includes(location.pathname);
+  
+  return shouldShowBell ? <NotificationBell /> : null;
+}
 
 function App() {
   const [dark, setDark] = useState(false);
@@ -80,8 +114,8 @@ function App() {
         {/* Footer always visible */}
         <Footer />
 
-        {/* Floating Notification Bell - Only show when logged in */}
-        <NotificationBell />
+        {/* Floating Notification Bell - Smart Visibility */}
+        <ConditionalNotificationBell />
       </div>
     </Router>
   );
