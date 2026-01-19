@@ -891,6 +891,121 @@
   }
 }
 
+.conv-clickable {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.delete-conv-btn {
+  background: #fee2e2;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+}
+
+.conversation-item:hover .delete-conv-btn {
+  opacity: 1;
+}
+
+.delete-conv-btn:hover {
+  background: #fca5a5;
+  transform: scale(1.1);
+}
+
+.delete-msg-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.75rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.delete-msg-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.2);
+}
+
+.message-input-form-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.emoji-btn-inline,
+.attach-btn-inline,
+.send-btn-inline {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emoji-btn-inline,
+.attach-btn-inline {
+  background: #f3f4f6;
+  font-size: 1.125rem;
+}
+
+.emoji-btn-inline:hover,
+.attach-btn-inline:hover {
+  background: #e5e7eb;
+  transform: scale(1.1);
+}
+
+.message-input-inline {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 1.5rem;
+  font-size: 0.9375rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.message-input-inline:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.send-btn-inline {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.send-btn-inline:hover:not(:disabled) {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.send-btn-inline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.send-icon {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+
 /* ========================================
    MOBILE LANDSCAPE MODE
    ======================================== */

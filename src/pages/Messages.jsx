@@ -7,14 +7,16 @@ import { io } from 'socket.io-client'
 const API_BASE = import.meta.env.VITE_API || 'http://localhost:5000/api'
 const SOCKET_URL = import.meta.env.VITE_API_BASE || 'http://localhost:5000'
 
-const socket = io(SOCKET_URL)
+let socket = null;
 
 function Messages() {
   const navigate = useNavigate()
   const messagesEndRef = useRef(null)
+  const messagesContainerRef = useRef(null)
 
   const [conversations, setConversations] = useState([])
   const [selectedChat, setSelectedChat] = useState(null)
+  const [selectedChatUser, setSelectedChatUser] = useState(null)
   const [messages, setMessages] = useState([])
   const [messageText, setMessageText] = useState('')
   const [loading, setLoading] = useState(true)
@@ -22,9 +24,25 @@ function Messages() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState(null)
 
-  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  // Get current user ID from token
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]))
+        setCurrentUserId(payload.id)
+      } catch (err) {
+        console.error('Error parsing token:', err)
+      }
+    }
+  }, [])
 
+  // Scroll to bottom function
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -32,11 +50,42 @@ function Messages() {
 
     fetchConversations(token)
     setTimeout(() => setIsVisible(true), 100)
+
+    // Initialize Socket.IO
+    if (!socket) {
+      socket = io(SOCKET_URL, {
+        auth: { token }
+      })
+
+      // Listen for new messages
+      socket.on('newMessage', (message) => {
+        console.log('New message received:', message)
+        setMessages(prev => [...prev, message])
+        // Auto scroll only for new messages
+        setTimeout(scrollToBottom, 100)
+      })
+
+      // Listen for message deletions
+      socket.on('messageDeleted', ({ messageId }) => {
+        setMessages(prev => prev.filter(msg => msg._id !== messageId))
+      })
+    }
+
+    return () => {
+      if (socket) {
+        socket.off('newMessage')
+        socket.off('messageDeleted')
+      }
+    }
   }, [navigate])
 
+  // Only scroll to bottom when messages first load, NOT on every message
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    if (messages.length > 0) {
+      // Scroll to bottom only when chat is first opened
+      setTimeout(scrollToBottom, 300)
+    }
+  }, [selectedChat]) // Only trigger when chat changes
 
   const fetchConversations = async (token) => {
     try {
@@ -60,71 +109,149 @@ function Messages() {
     }
   }
 
-  const fetchMessages = async (matchId) => {
-  try {
-    const token = localStorage.getItem('token')
-    const res = await fetch(`${API_BASE}/messages/${matchId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+  const fetchMessages = async (matchId, chatUser) => {
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${API_BASE}/messages/${matchId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
 
-    const data = await res.json()
-    setMessages(data.success && data.messages ? data.messages : [])
-    setSelectedChat(matchId)
+      const data = await res.json()
+      setMessages(data.success && data.messages ? data.messages : [])
+      setSelectedChat(matchId)
+      setSelectedChatUser(chatUser)
 
-    // Join Socket.IO room
-    socket.emit('joinChat', matchId)
-  } catch (err) {
-    console.error('Error fetching messages:', err)
-    setMessages([])
+      // Join Socket.IO room
+      if (socket) {
+        socket.emit('joinChat', matchId)
+      }
+    } catch (err) {
+      console.error('Error fetching messages:', err)
+      setMessages([])
+    }
   }
-}
-
 
   const handleSendMessage = async (e) => {
-  e.preventDefault()
-  if (!messageText.trim() || !selectedChat) return
+    e.preventDefault()
+    if (!messageText.trim() || !selectedChat) return
 
-  setSending(true)
-  const token = localStorage.getItem('token')
+    setSending(true)
+    const token = localStorage.getItem('token')
 
-  const newMessage = {
-    matchId: selectedChat,
-    text: messageText.trim(),
-    isMine: true,
-    createdAt: new Date()
-  }
-
-  // Instant UI update
-  setMessages(prev => [...prev, newMessage])
-  setMessageText('')
-
-  try {
-    const res = await fetch(`${API_BASE}/messages`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        matchId: selectedChat,
-        text: messageText.trim()
-      })
-    })
-
-    const data = await res.json()
-    if (data.success) {
-      // Emit to Socket.IO for other users
-      socket.emit('sendMessage', data.message)
-    } else {
-      console.error('Failed to send message:', data)
+    const tempId = Date.now()
+    const newMessage = {
+      _id: tempId,
+      matchId: selectedChat,
+      text: messageText.trim(),
+      isMine: true,
+      createdAt: new Date(),
+      sender: { _id: currentUserId }
     }
-  } catch (err) {
-    console.error('Error sending message:', err)
-  } finally {
-    setSending(false)
-  }
-}
 
+    // Instant UI update
+    setMessages(prev => [...prev, newMessage])
+    setMessageText('')
+    
+    // Auto scroll for sent messages
+    setTimeout(scrollToBottom, 100)
+
+    try {
+      const res = await fetch(`${API_BASE}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          matchId: selectedChat,
+          text: newMessage.text
+        })
+      })
+
+      const data = await res.json()
+      if (data.success) {
+        // Replace temp message with real one
+        setMessages(prev => 
+          prev.map(msg => msg._id === tempId ? data.message : msg)
+        )
+        
+        // Emit to Socket.IO for other users
+        if (socket) {
+          socket.emit('sendMessage', {
+            matchId: selectedChat,
+            message: data.message
+          })
+        }
+      } else {
+        console.error('Failed to send message:', data)
+        // Remove temp message on error
+        setMessages(prev => prev.filter(msg => msg._id !== tempId))
+        alert('Failed to send message')
+      }
+    } catch (err) {
+      console.error('Error sending message:', err)
+      setMessages(prev => prev.filter(msg => msg._id !== tempId))
+      alert('Error sending message')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const handleDeleteMessage = async (messageId) => {
+    if (!confirm('Delete this message?')) return
+
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${API_BASE}/messages/${messageId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      if (res.ok) {
+        setMessages(prev => prev.filter(msg => msg._id !== messageId))
+        
+        // Emit deletion to Socket.IO
+        if (socket) {
+          socket.emit('deleteMessage', {
+            matchId: selectedChat,
+            messageId
+          })
+        }
+      } else {
+        alert('Failed to delete message')
+      }
+    } catch (err) {
+      console.error('Error deleting message:', err)
+      alert('Error deleting message')
+    }
+  }
+
+  const handleDeleteConversation = async (matchId) => {
+    if (!confirm('Delete this conversation? This cannot be undone.')) return
+
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${API_BASE}/matches/${matchId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      if (res.ok) {
+        setConversations(prev => prev.filter(conv => conv.matchId !== matchId))
+        if (selectedChat === matchId) {
+          setSelectedChat(null)
+          setSelectedChatUser(null)
+          setMessages([])
+        }
+        alert('Conversation deleted')
+      } else {
+        alert('Failed to delete conversation')
+      }
+    } catch (err) {
+      console.error('Error deleting conversation:', err)
+      alert('Error deleting conversation')
+    }
+  }
 
   const handleEmojiClick = (emoji) => {
     setMessageText(prev => prev + emoji)
@@ -206,35 +333,51 @@ function Messages() {
                 <div
                   key={conv._id}
                   className={`conversation-item ${selectedChat === conv.matchId ? 'active' : ''}`}
-                  onClick={() => fetchMessages(conv.matchId)}
                 >
-                  <div className="conv-avatar-container">
-                    <img
-                      src={conv.user?.image || 'https://i.pravatar.cc/400?img=1'}
-                      alt={conv.user?.name || 'User'}
-                      className="conv-avatar"
-                    />
-                    <span className="online-indicator"></span>
-                  </div>
+                  <div 
+                    className="conv-clickable"
+                    onClick={() => fetchMessages(conv.matchId, conv.user)}
+                  >
+                    <div className="conv-avatar-container">
+                      <img
+                        src={conv.user?.image || 'https://i.pravatar.cc/400?img=1'}
+                        alt={conv.user?.name || 'User'}
+                        className="conv-avatar"
+                      />
+                      <span className="online-indicator"></span>
+                    </div>
 
-                  <div className="conv-details">
-                    <div className="conv-header">
-                      <h3 className="conv-name">{conv.user?.name || 'Unknown User'}</h3>
-                      {conv.lastMessage && (
-                        <span className="conv-time">
-                          {getTimeAgo(conv.lastMessage.createdAt)}
-                        </span>
-                      )}
-                    </div>
-                    <div className="conv-message-row">
-                      <p className="conv-last-message">
-                        {conv.lastMessage?.text || 'No messages yet'}
-                      </p>
-                      {conv.unreadCount > 0 && (
-                        <span className="unread-count">{conv.unreadCount}</span>
-                      )}
+                    <div className="conv-details">
+                      <div className="conv-header">
+                        <h3 className="conv-name">{conv.user?.name || 'Unknown User'}</h3>
+                        {conv.lastMessage && (
+                          <span className="conv-time">
+                            {getTimeAgo(conv.lastMessage.createdAt)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="conv-message-row">
+                        <p className="conv-last-message">
+                          {conv.lastMessage?.text || 'No messages yet'}
+                        </p>
+                        {conv.unreadCount > 0 && (
+                          <span className="unread-count">{conv.unreadCount}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                  
+                  {/* Delete Conversation Button */}
+                  <button
+                    className="delete-conv-btn"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDeleteConversation(conv.matchId)
+                    }}
+                    title="Delete conversation"
+                  >
+                    🗑️
+                  </button>
                 </div>
               ))}
             </div>
@@ -273,7 +416,7 @@ function Messages() {
                 </div>
 
                 {/* Messages Area */}
-                <div className="messages-area">
+                <div className="messages-area" ref={messagesContainerRef}>
                   <div className="messages-list">
                     {messages.length === 0 ? (
                       <div style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
@@ -292,7 +435,16 @@ function Messages() {
                                 {getTimeAgo(msg.createdAt)}
                               </span>
                               {msg.isMine && (
-                                <span className="message-status">✓✓</span>
+                                <>
+                                  <span className="message-status">✓✓</span>
+                                  <button
+                                    className="delete-msg-btn"
+                                    onClick={() => handleDeleteMessage(msg._id)}
+                                    title="Delete message"
+                                  >
+                                    🗑️
+                                  </button>
+                                </>
                               )}
                             </div>
                           </div>
@@ -303,12 +455,12 @@ function Messages() {
                   </div>
                 </div>
 
-                {/* Message Input */}
+                {/* Message Input - INLINE */}
                 <div className="message-input-container">
-                  <form onSubmit={handleSendMessage} className="message-input-form">
+                  <form onSubmit={handleSendMessage} className="message-input-form-inline">
                     <button
                       type="button"
-                      className="emoji-btn"
+                      className="emoji-btn-inline"
                       onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                     >
                       😊
@@ -331,20 +483,20 @@ function Messages() {
 
                     <input
                       type="text"
-                      className="message-input"
+                      className="message-input-inline"
                       value={messageText}
                       onChange={(e) => setMessageText(e.target.value)}
                       placeholder="Type a message..."
                       disabled={sending}
                     />
 
-                    <button type="button" className="attach-btn" title="Attach file">
+                    <button type="button" className="attach-btn-inline" title="Attach file">
                       📎
                     </button>
 
                     <button
                       type="submit"
-                      className="send-btn"
+                      className="send-btn-inline"
                       disabled={!messageText.trim() || sending}
                     >
                       <span className="send-icon">➤</span>
@@ -387,3 +539,4 @@ function Messages() {
 }
 
 export default Messages
+
