@@ -16,7 +16,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard-page">
-     
+
 
       <main className="dashboard-content">
         <section className={`welcome-section ${isVisible ? 'visible' : ''}`}>
@@ -27,7 +27,7 @@ function Dashboard() {
           </div>
           <div className="welcome-text">
             <h1>Welcome to Your Dashboard</h1>
-            <p>Start your journey to find your perfect life partner 🤍</p>
+            <p>Start your journey to find your perfect life partner</p>
           </div>
         </section>
 
