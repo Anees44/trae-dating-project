@@ -7,6 +7,7 @@ import './NotificationBell.css';
 const API_BASE = import.meta.env.VITE_API;
 
 function NotificationBell() {
+    console.log('🔔 NotificationBell component rendered!');
   const navigate = useNavigate();
   const panelRef = useRef(null);
   
@@ -15,6 +16,7 @@ function NotificationBell() {
   const [showPanel, setShowPanel] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  
   // Fetch unread count every 30 seconds
   useEffect(() => {
     const token = localStorage.getItem('token');
