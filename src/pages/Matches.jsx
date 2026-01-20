@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import {
+  FaUsers, FaUserFriends, FaCheckCircle,
+  FaBriefcase, FaMapMarkerAlt, FaGraduationCap, FaRulerVertical,
+  FaStar, FaClock, FaUserCircle
+} from "react-icons/fa";
+
+
 import "./Matches.css";
 
 const API_URL = import.meta.env.VITE_API || "http://localhost:5000/api";
@@ -9,10 +16,10 @@ const API_URL = import.meta.env.VITE_API || "http://localhost:5000/api";
 function Matches() {
   const navigate = useNavigate();
 
-  // States
+
   const [isVisible, setIsVisible] = useState(false);
   const [matches, setMatches] = useState([]);
-  const [friends, setFriends] = useState([]); // ⭐ NEW: Friends list
+  const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
   const [ageRange, setAgeRange] = useState([20, 35]);
@@ -28,7 +35,6 @@ function Matches() {
     maritalStatus: "",
   });
 
-  // Check authentication on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -37,11 +43,10 @@ function Matches() {
     }
 
     fetchMatches();
-    fetchFriends(); // ⭐ NEW: Fetch friends
+    fetchFriends();
     setTimeout(() => setIsVisible(true), 100);
   }, [navigate]);
 
-  // Fetch matches from API
   const fetchMatches = async () => {
     try {
       setLoading(true);
@@ -79,7 +84,6 @@ function Matches() {
     }
   };
 
-  // ⭐ NEW: Fetch friends (mutual interests)
   const fetchFriends = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -100,7 +104,6 @@ function Matches() {
     }
   };
 
-  // Send interest
   const handleShowInterest = async (matchId) => {
     try {
       const token = localStorage.getItem("token");
@@ -125,25 +128,25 @@ function Matches() {
       console.log("Interest response:", data);
 
       if (response.ok) {
-        // ⭐ Update match status to pending or friends
+
         setMatches((prev) =>
           prev.map((m) =>
             m.id === matchId
               ? {
-                  ...m,
-                  interestSent: true,
-                  status: data.match.status,
-                  matchId: data.match._id,
-                }
+                ...m,
+                interestSent: true,
+                status: data.match.status,
+                matchId: data.match._id,
+              }
               : m
           )
         );
 
         if (data.match.isMutual) {
-          alert("You are now friends! 💝");
-          // Refresh friends list
+          alert("You are now friends!");
+
           fetchFriends();
-          // Refresh matches to remove this person from browse
+
           fetchMatches();
         } else {
           alert("Interest sent successfully! ⏳");
@@ -157,7 +160,6 @@ function Matches() {
     }
   };
 
-  // Add to shortlist
   const handleShortlist = async (matchId) => {
     try {
       const token = localStorage.getItem("token");
@@ -174,7 +176,7 @@ function Matches() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Added to shortlist! ⭐");
+        alert("Added to shortlist!");
       } else {
         alert(data.message || "Failed to add to shortlist");
       }
@@ -184,18 +186,17 @@ function Matches() {
     }
   };
 
-  // ⭐ NEW: Navigate to messages
   const handleMessageFriend = (matchId) => {
-    navigate("/messages"); // Navigate to messages page
+    navigate("/messages");
   };
 
-  // View profile
+
   const handleViewProfile = (match) => {
     setSelectedMatch(match);
     setShowProfileModal(true);
   };
 
-  // Filter matches
+
   const filteredMatches = matches.filter((match) => {
     if (filters.religion && match.religion !== filters.religion) return false;
     if (filters.location && !match.location.includes(filters.location))
@@ -208,12 +209,12 @@ function Matches() {
     return true;
   });
 
-  // ⭐ Filter friends
+
   const filteredFriends = friends.filter((friend) =>
     friend.name?.toLowerCase().includes("")
   );
 
-  // Reset filters
+
   const resetFilters = () => {
     setFilters({
       religion: "",
@@ -227,7 +228,7 @@ function Matches() {
     fetchMatches();
   };
 
-  // ⭐ Get display list based on active filter
+
   const getDisplayList = () => {
     if (activeFilter === "friends") {
       return filteredFriends;
@@ -240,7 +241,7 @@ function Matches() {
 
   const displayList = getDisplayList();
 
-  // Loading state
+
   if (loading) {
     return (
       <div className="matches-page">
@@ -258,7 +259,7 @@ function Matches() {
       <Navbar />
 
       <main className="matches-main">
-        {/* Header */}
+
         <div className={`matches-header ${isVisible ? "visible" : ""}`}>
           <div className="header-bg-circle circle-1"></div>
           <div className="header-bg-circle circle-2"></div>
@@ -268,12 +269,12 @@ function Matches() {
             <h1>Find Your Perfect Match</h1>
             <p>
               Discover compatible profiles and start your journey to happily
-              ever after 💕
+              ever after
             </p>
           </div>
         </div>
 
-        {/* Filter Section */}
+
         <div className={`filter-section ${isVisible ? "visible" : ""}`}>
           <div className="filter-header">
             <div className="filter-tabs">
@@ -281,16 +282,16 @@ function Matches() {
                 className={`filter-tab ${activeFilter === "all" ? "active" : ""}`}
                 onClick={() => setActiveFilter("all")}
               >
-                <span className="tab-icon">👥</span>
+                <span className="tab-icon"><FaUsers /></span>
                 All Matches
                 <span className="tab-count">{matches.length}</span>
               </button>
-              {/* ⭐ CHANGED: Online Now → Friends */}
+
               <button
                 className={`filter-tab ${activeFilter === "friends" ? "active" : ""}`}
                 onClick={() => setActiveFilter("friends")}
               >
-                <span className="tab-icon">💝</span>
+                <span className="tab-icon"><FaUserFriends /></span>
                 Friends
                 <span className="tab-count">{friends.length}</span>
               </button>
@@ -298,7 +299,7 @@ function Matches() {
                 className={`filter-tab ${activeFilter === "verified" ? "active" : ""}`}
                 onClick={() => setActiveFilter("verified")}
               >
-                <span className="tab-icon">✓</span>
+                <span className="tab-icon"><FaCheckCircle /></span>
                 Verified
                 <span className="tab-count">
                   {matches.filter((m) => m.verified).length}
@@ -453,7 +454,7 @@ function Matches() {
                   )}
                   {/* ⭐ Show friend badge for friends */}
                   {activeFilter === "friends" && (
-                    <div className="friend-badge">Friend 💝</div>
+                    <div className="friend-badge">Friend </div>
                   )}
                 </div>
 
@@ -464,19 +465,19 @@ function Matches() {
 
                   <div className="match-details">
                     <div className="detail-item">
-                      <span className="detail-icon">💼</span>
+                      <span className="detail-icon"><FaBriefcase className="info-icon" /></span>
                       <span>{match.profession}</span>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-icon">📍</span>
+                      <span className="detail-icon"><FaMapMarkerAlt className="info-icon" /></span>
                       <span>{match.location}</span>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-icon">🎓</span>
+                      <span className="detail-icon"><FaGraduationCap className="info-icon" /></span>
                       <span>{match.education}</span>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-icon">📏</span>
+                      <span className="detail-icon"><FaRulerVertical className="info-icon" /></span>
                       <span>{match.height}</span>
                     </div>
                   </div>
@@ -497,42 +498,28 @@ function Matches() {
 
                   {/* Actions */}
                   <div className="match-actions">
-                    <button
-                      className="btn-view-profile"
-                      onClick={() => handleViewProfile(match)}
-                    >
-                      View Profile
+                    <button className="btn-view-profile" onClick={() => handleViewProfile(match)}>
+                      <FaUserCircle className="action-icon" />
+                      <span>View Profile</span>
                     </button>
-                    <button
-                      className="btn-icon"
-                      onClick={() => handleShortlist(match.id)}
-                      title="Add to Shortlist"
-                    >
-                      ⭐
+                    <button className="btn-icon" onClick={() => handleShortlist(match.id)} title="Add to Shortlist">
+                      <FaStar className="action-icon" />
                     </button>
-                    
+
                     {/* ⭐ CHANGED: Show different button based on status */}
                     {activeFilter === "friends" ? (
-                      // Friends: Show "Message" button
-                      <button
-                        className="btn-message"
-                        onClick={() => handleMessageFriend(match.matchId)}
-                      >
+                      <button className="btn-message" onClick={() => handleMessageFriend(match.matchId)}>
                         💬 Message
                       </button>
                     ) : match.interestSent || match.status === "pending" ? (
-                      // Pending: Show "Pending" button
                       <button className="btn-pending" disabled>
-                        ⏳ Pending
+                        <FaClock className="action-icon" /> Pending
                       </button>
                     ) : (
-                      // Not sent: Show "Send Interest" button
-                      <button
-                        className="btn-interest"
-                        onClick={() => handleShowInterest(match.id)}
-                      >
-                        💝 Send Interest
+                      <button className="btn-interest" onClick={() => handleShowInterest(match.id)}>
+                        Send Interest
                       </button>
+
                     )}
                   </div>
                 </div>
@@ -653,7 +640,7 @@ function Matches() {
                   >
                     ⭐ Shortlist
                   </button>
-                  
+
                   {/* ⭐ Modal actions based on status */}
                   {activeFilter === "friends" ? (
                     <button

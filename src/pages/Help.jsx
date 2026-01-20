@@ -7,7 +7,7 @@ const Help = () => {
       {/* Header */}
       <div className="help-header">
         <h1>Help & Support</h1>
-        <p>Having trouble? We’re here to help you 💙</p>
+        <p>Having trouble? We’re here to help you </p>
       </div>
 
       {/* Categories */}

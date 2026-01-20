@@ -142,10 +142,37 @@
   color: white;
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
 }
+.action-icon {
+  font-size: 1rem;       /* consistent icon size */
+  margin-right: 0.5rem;  /* space between icon and text */
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Buttons with only icon */
+.btn-icon .action-icon {
+  margin-right: 0;
+  font-size: 1.2rem;
+}
+
+/* Modal action icons */
+.btn-modal-shortlist .action-icon,
+.btn-modal-interest .action-icon,
+.btn-modal-message .action-icon,
+.btn-modal-pending .action-icon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
 
 .tab-icon {
   font-size: clamp(1rem, 2.5vw, 1.25rem);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  padding: 6px 0;
 }
 
 .tab-count {

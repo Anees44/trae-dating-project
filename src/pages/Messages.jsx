@@ -2,6 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Messages.css";
 import { io } from "socket.io-client";
+import {
+  FaComments,
+  FaSearch,
+  FaTrash,
+  FaSmile,
+  FaPaperclip,
+  FaPaperPlane,
+  FaPhoneAlt,
+  FaVideo, FaEllipsisV
+} from "react-icons/fa";
+
 
 const API_BASE = import.meta.env.VITE_API || "http://localhost:5000/api";
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_BASE || "http://localhost:5000";
@@ -321,7 +332,7 @@ function Messages() {
           <div className="header-bg-circle circle-1"></div>
           <div className="header-bg-circle circle-2"></div>
           <div className="header-content">
-            <h1>💬 Messages</h1>
+            <h1><FaComments /> Messages</h1>
             <p>Connect and chat with your matches</p>
           </div>
         </div>
@@ -339,7 +350,7 @@ function Messages() {
 
             {/* Search Box */}
             <div className="search-box">
-              <span className="search-icon">🔍</span>
+              <span className="search-icon"><FaSearch /></span>
               <input
                 type="text"
                 placeholder="Search conversations..."
@@ -358,6 +369,7 @@ function Messages() {
 
               {!loading && filteredConversations.length === 0 && (
                 <div className="no-conversations">
+                  
                   <p>No conversations yet</p>
                   <small>Start matching to begin chatting!</small>
                 </div>
@@ -414,7 +426,7 @@ function Messages() {
                     }}
                     title="Delete conversation"
                   >
-                    🗑️
+                    <FaTrash className="trash" />
                   </button>
                 </div>
               ))}
@@ -425,7 +437,7 @@ function Messages() {
           <div className="chat-area">
             {!selectedChat ? (
               <div className="no-chat-selected">
-                <div className="no-chat-icon">💬</div>
+                <div className="no-chat-icon"><FaComments /></div>
                 <h3>Select a conversation</h3>
                 <p>Choose a conversation from the list to start messaging</p>
               </div>
@@ -452,13 +464,13 @@ function Messages() {
                   </div>
                   <div className="chat-actions">
                     <button className="chat-action-btn" title="Call">
-                      📞
+                      <FaPhoneAlt />
                     </button>
                     <button className="chat-action-btn" title="Video call">
-                      📹
+                      <FaVideo />
                     </button>
                     <button className="chat-action-btn" title="More">
-                      ⋮
+                      <FaEllipsisV />
                     </button>
                   </div>
                 </div>
@@ -474,6 +486,7 @@ function Messages() {
                           color: "#6b7280",
                         }}
                       >
+                        <FaComments className="big-icon" />
                         <p>No messages yet. Start the conversation!</p>
                       </div>
                     ) : (
@@ -496,7 +509,7 @@ function Messages() {
                                     onClick={() => handleDeleteMessage(msg._id)}
                                     title="Delete message"
                                   >
-                                    🗑️
+                                    <FaTrash className="trash" />
                                   </button>
                                 </>
                               )}
@@ -520,7 +533,7 @@ function Messages() {
                       className="emoji-btn-inline"
                       onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                     >
-                      😊
+                      <FaSmile />
                     </button>
 
                     {showEmojiPicker && (
@@ -552,7 +565,7 @@ function Messages() {
                       className="attach-btn-inline"
                       title="Attach file"
                     >
-                      📎
+                      <FaPaperclip />
                     </button>
 
                     <button
@@ -560,7 +573,7 @@ function Messages() {
                       className="send-btn-inline"
                       disabled={!messageText.trim() || sending}
                     >
-                      <span className="send-icon">➤</span>
+                      <span className="send-icon"><FaPaperPlane /></span>
                     </button>
                   </form>
                 </div>
