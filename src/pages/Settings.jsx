@@ -1,5 +1,20 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { 
+  FaUser, 
+  FaLock, 
+  FaShieldAlt, 
+  FaBell, 
+  FaExclamationTriangle, 
+  FaEye, 
+  FaCamera, 
+  FaPhone, 
+  FaEnvelope, 
+  FaHeart, 
+    FaComment,
+    FaStar,
+  FaGift 
+} from "react-icons/fa";
 import './Settings.css'
 
 const API = import.meta.env.VITE_API
@@ -14,12 +29,12 @@ function Settings() {
   const [loading, setLoading] = useState(false)
 
   const tabs = [
-    { id: 'profile', name: 'Profile Info', icon: '👤' },
-    { id: 'password', name: 'Password', icon: '🔒' },
-    { id: 'privacy', name: 'Privacy', icon: '🛡️' },
-    { id: 'notifications', name: 'Notifications', icon: '🔔' },
-    { id: 'danger', name: 'Account', icon: '⚠️' }
-  ]
+  { id: 'profile', name: 'Profile Info', icon: <FaUser /> },
+  { id: 'password', name: 'Password', icon: <FaLock /> },
+  { id: 'privacy', name: 'Privacy', icon: <FaShieldAlt /> },
+  { id: 'notifications', name: 'Notifications', icon: <FaBell /> },
+  { id: 'danger', name: 'Account', icon: <FaExclamationTriangle /> }
+]
 
   const [profileData, setProfileData] = useState({
     fullName: '',
@@ -335,9 +350,10 @@ function Settings() {
               
               {/* Profile Info Tab */}
               {activeTab === 'profile' && (
+                
                 <div className="tab-content">
                   <h2 className="tab-title">
-                    <span className="title-icon">👤</span>
+                    <span className="title-icon"><FaUser/></span>
                     Personal Information
                   </h2>
                   <form onSubmit={handleProfileUpdate} className="settings-form">
@@ -408,7 +424,7 @@ function Settings() {
               {activeTab === 'password' && (
                 <div className="tab-content">
                   <h2 className="tab-title">
-                    <span className="title-icon">🔒</span>
+                    <span className="title-icon"><FaLock/></span>
                     Change Password
                   </h2>
                   <form onSubmit={handlePasswordChange} className="settings-form password-form">
@@ -462,7 +478,7 @@ function Settings() {
               {activeTab === 'privacy' && (
                 <div className="tab-content">
                   <h2 className="tab-title">
-                    <span className="title-icon">🛡️</span>
+                    <span className="title-icon"><FaShieldAlt /></span>
                     Privacy Settings
                   </h2>
                   <div className="privacy-sections">
@@ -471,7 +487,7 @@ function Settings() {
                       <div className="privacy-options">
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">👁️</div>
+                            <div className="option-icon"><FaEye /></div>
                             <div>
                               <p className="option-title">Show My Profile</p>
                               <p className="option-desc">Allow others to view your profile</p>
@@ -489,7 +505,7 @@ function Settings() {
 
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">📸</div>
+                            <div className="option-icon"><FaCamera /></div>
                             <div>
                               <p className="option-title">Show Photos</p>
                               <p className="option-desc">Display your photos to visitors</p>
@@ -507,7 +523,7 @@ function Settings() {
 
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">📞</div>
+                            <div className="option-icon"><FaPhone /></div>
                             <div>
                               <p className="option-title">Show Contact Info</p>
                               <p className="option-desc">Share phone number with matches</p>
@@ -530,7 +546,7 @@ function Settings() {
                       <div className="privacy-options">
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">💬</div>
+                            <div className="option-icon"><FaEnvelope /></div>
                             <div>
                               <p className="option-title">Allow Messages</p>
                               <p className="option-desc">Receive messages from matches</p>
@@ -548,7 +564,7 @@ function Settings() {
 
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">🕐</div>
+                            <div className="option-icon"><FaHeart /></div>
                             <div>
                               <p className="option-title">Show Last Seen</p>
                               <p className="option-desc">Let others see when you were active</p>
@@ -579,7 +595,7 @@ function Settings() {
               {activeTab === 'notifications' && (
                 <div className="tab-content">
                   <h2 className="tab-title">
-                    <span className="title-icon">🔔</span>
+                    <span className="title-icon"><FaBell /></span>
                     Notification Preferences
                   </h2>
                   <div className="privacy-sections">
@@ -588,7 +604,7 @@ function Settings() {
                       <div className="privacy-options">
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">📧</div>
+                            <div className="option-icon"><FaEnvelope /></div>
                             <div>
                               <p className="option-title">Enable Email Notifications</p>
                               <p className="option-desc">Receive updates via email</p>
@@ -606,7 +622,7 @@ function Settings() {
 
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">💝</div>
+                            <div className="option-icon"><FaHeart /></div>
                             <div>
                               <p className="option-title">New Matches</p>
                               <p className="option-desc">Get notified about new matches</p>
@@ -624,7 +640,7 @@ function Settings() {
 
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">💬</div>
+                            <div className="option-icon"><FaComment /></div>
                             <div>
                               <p className="option-title">Messages</p>
                               <p className="option-desc">Alert for new messages</p>
@@ -642,7 +658,7 @@ function Settings() {
 
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">⭐</div>
+                            <div className="option-icon"><FaStar /></div>
                             <div>
                               <p className="option-title">Interests</p>
                               <p className="option-desc">When someone shows interest</p>
@@ -660,7 +676,7 @@ function Settings() {
 
                         <label className="toggle-option">
                           <div className="option-info">
-                            <div className="option-icon">🎁</div>
+                            <div className="option-icon"><FaGift /></div>
                             <div>
                               <p className="option-title">Promotions</p>
                               <p className="option-desc">Special offers and updates</p>
@@ -691,7 +707,7 @@ function Settings() {
               {activeTab === 'danger' && (
                 <div className="tab-content">
                   <h2 className="tab-title">
-                    <span className="title-icon">⚠️</span>
+                    <span className="title-icon"><FaExclamationTriangle /></span>
                     Danger Zone
                   </h2>
                   <div className="danger-sections">
