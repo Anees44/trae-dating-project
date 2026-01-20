@@ -46,6 +46,16 @@ function Profile() {
     navigate("/login");
   }
 
+  // Function to get default profile image based on gender
+  const getDefaultImage = () => {
+    if (formData.gender === "male") {
+      return "/assets/Male Pic.png"; // Aapki male default image ka path
+    } else if (formData.gender === "female") {
+      return "/assets/female pic.png"; // Aapki female default image ka path
+    }
+    return "/assets/default-avatar.png"; // Agar gender select nahi kiya
+  };
+
   useEffect(() => {
     if (!token) return;
     fetchProfile();
@@ -59,7 +69,6 @@ function Profile() {
       });
 
       if (res.status === 404) {
-        // Profile doesn't exist yet - that's okay
         console.log("No profile found - user can create one");
         setProfileExists(false);
         setLoading(false);
@@ -105,15 +114,11 @@ function Profile() {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    // Special handling for age
     if (name === "age") {
-      // Allow empty string or valid numbers
       if (value === "" || (!isNaN(value) && parseInt(value) >= 0)) {
-        // Only validate if there's a value
         if (value !== "" && parseInt(value) < 18) {
           setMessage({ type: "error", text: "Age must be 18 or above." });
         } else {
-          // Clear error if age is valid
           if (message.type === "error" && message.text.includes("Age")) {
             setMessage({ type: "", text: "" });
           }
@@ -161,7 +166,6 @@ function Profile() {
     setSaving(true);
     setMessage({ type: "", text: "" });
 
-    // Validate age before submitting
     if (formData.age && parseInt(formData.age) < 18) {
       setMessage({ type: "error", text: "Age must be 18 or above." });
       setSaving(false);
@@ -253,8 +257,18 @@ function Profile() {
                     <img src={imagePreview} alt="Profile" />
                   ) : (
                     <div className="no-image">
-                      <span className="camera-icon">📷</span>
-                      <span>No Image</span>
+                      {formData.gender ? (
+                        <img 
+                          src={getDefaultImage()} 
+                          alt="Default Profile" 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <>
+                          <span className="camera-icon">📷</span>
+                          <span>No Image</span>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
