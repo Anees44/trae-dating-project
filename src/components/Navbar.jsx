@@ -4,10 +4,10 @@ import "./Navbar.css";
 
 const navLinks = [
   { name: "Home", path: "/" },
-  { name: "About", path: "/#about" },
-  { name: "Testimonials", path: "/testimonials" },
+  { name: "About", path: "/about" },
+  // { name: "Testimonials", path: "/testimonials" },
   { name: "Contact", path: "/contact" },
-  { name: "Help", path: "/" },
+  { name: "Help", path: "/help" },
 ];
 
 function Navbar() {
@@ -49,6 +49,7 @@ function Navbar() {
               {link.name}
             </Link>
           ))}
+          {/* <Link to="/help">Help</Link> */}
 
           {/* ✅ Dashboard only when logged in */}
           {isLoggedIn && <Link to="/dashboard" className="dashboard-link">Dashboard</Link>}

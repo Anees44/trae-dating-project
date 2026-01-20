@@ -8,6 +8,7 @@ import Features from "./components/Features.jsx";
 import Footer from "./components/Footer.jsx";
 import NotificationBell from "./components/NotificationBell.jsx";
 
+
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Contact from "./pages/Contact.jsx";
@@ -16,6 +17,8 @@ import Profile from "./pages/Profile.jsx";
 import Matches from './pages/Matches.jsx';
 import Messages from './pages/Messages.jsx';
 import Settings from './pages/Settings.jsx';
+import Help from "./pages/Help";
+
 
 import './index.css'; // Import plain CSS
 import About from "./components/About.jsx";
@@ -24,33 +27,33 @@ import About from "./components/About.jsx";
 function ConditionalNotificationBell() {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   useEffect(() => {
     // Check if user is logged in
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
-    
+
     // Optional: Listen for storage changes (login/logout in other tabs)
     const handleStorageChange = () => {
       const token = localStorage.getItem('token');
       setIsLoggedIn(!!token);
     };
-    
+
     window.addEventListener('storage', handleStorageChange);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, [location]); // Re-check when location changes
-  
+
   // Pages where bell should NOT appear (public pages)
   const hideBellOnPages = ['/', '/login', '/register', '/contact'];
-  
+
   // Show bell only if:
   // 1. User is logged in (has token)
   // 2. NOT on public pages
   const shouldShowBell = isLoggedIn && !hideBellOnPages.includes(location.pathname);
-  
+
   return shouldShowBell ? <NotificationBell /> : null;
 }
 
@@ -95,8 +98,10 @@ function App() {
             <Route path="/messages" element={<Messages />} />
             <Route path="/settings" element={<Settings />} />
 
+
             {/* Other pages */}
             <Route path="/contact" element={<Contact />} />
+            <Route path="/help" element={<Help />} />
             {/* <Route path="/testimonials" element={<Testimonials />} /> */}
 
             {/* 404 fallback */}
