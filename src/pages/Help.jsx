@@ -1,4 +1,5 @@
 import "./Help.css";
+import { FaMobileAlt, FaPalette, FaUser, FaBug, FaEnvelope } from "react-icons/fa";
 
 const Help = () => {
   return (
@@ -12,17 +13,17 @@ const Help = () => {
       {/* Categories */}
       <div className="help-categories">
         <div className="help-card">
-          <h3>🔐 Account Issues</h3>
+          <h3><FaBug />Account Issues</h3>
           <p>Login, signup, or profile related problems</p>
         </div>
 
         <div className="help-card">
-          <h3>💬 Messages</h3>
+          <h3><FaEnvelope />Messages</h3>
           <p>Send button, chat & conversation issues</p>
         </div>
 
         <div className="help-card">
-          <h3>🎨 App Appearance</h3>
+          <h3><FaPalette />App Appearance</h3>
           <p>Dark mode & layout problems</p>
         </div>
       </div>

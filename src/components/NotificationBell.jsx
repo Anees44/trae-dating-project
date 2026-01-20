@@ -1,6 +1,7 @@
 // NotificationBell.jsx - Floating notification component
 
 import { useState, useEffect, useRef } from 'react';
+import { FaBell } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom';
 import './NotificationBell.css';
 
@@ -103,7 +104,7 @@ function NotificationBell() {
       const data = await res.json();
 
       if (res.ok) {
-        alert('Interest accepted! You can now start messaging. 💝');
+        alert('Interest accepted! You can now start messaging.');
         
         // Refresh notifications
         await fetchNotifications();
@@ -162,7 +163,7 @@ function NotificationBell() {
           onClick={() => setShowPanel(!showPanel)}
           aria-label="Notifications"
         >
-          🔔
+          <FaBell/>
           {unreadCount > 0 && (
             <span className="notification-badge">{unreadCount}</span>
           )}
