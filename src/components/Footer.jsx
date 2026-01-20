@@ -1,6 +1,3 @@
-
-
-
 import { Link } from "react-router-dom";
 import "./Footer.css";
 
@@ -8,7 +5,9 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-container">
+        {/* Top Section */}
         <div className="footer-top">
+          {/* Brand */}
           <div className="footer-brand">
             <h3>Mashallah</h3>
             <p>
@@ -23,16 +22,18 @@ function Footer() {
             </div>
           </div>
 
+          {/* Quick Links */}
           <div className="footer-links">
             <h4>Quick Links</h4>
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li><Link to="#features">Features</Link></li>
+              <li><Link to="#cookies">Cookies</Link></li>
               <li><Link to="#testimonials">Success Stories</Link></li>
               <li><Link to="#about">About Us</Link></li>
             </ul>
           </div>
 
+          {/* Support Links */}
           <div className="footer-links">
             <h4>Support</h4>
             <ul>
@@ -44,13 +45,9 @@ function Footer() {
           </div>
         </div>
 
+        {/* Bottom Section */}
         <div className="footer-bottom">
-          <p>&copy; 2024 Mashallah. All rights reserved.</p>
-          <div className="footer-bottom-links">
-            <Link to="/">Privacy</Link>
-            <Link to="/">Terms</Link>
-            <Link to="/">Cookies</Link>
-          </div>
+          <p>&copy; 2026 FaithBond. All rights reserved❤.</p>
         </div>
       </div>
     </footer>
