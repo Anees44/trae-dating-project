@@ -33,7 +33,7 @@ function Dashboard() {
         </section>
 
         <div className="dashboard-cards">
-          <Link to="/profile" className={`card group ${isVisible ? 'visible' : ''} delay-1`}>
+          <Link to="/profile" className={`card group ${isVisible ? 'visible' : ''} delay-1`} style={{ textDecoration: "none" }}>
             <div className="card-icon profile-icon">
               <FaUserCircle />
             </div>
@@ -42,7 +42,7 @@ function Dashboard() {
             <div className="card-cta">View Profile</div>
           </Link>
 
-          <Link to="/matches" className={`card group ${isVisible ? 'visible' : ''} delay-2`}>
+          <Link to="/matches" className={`card group ${isVisible ? 'visible' : ''} delay-2`} style={{ textDecoration: "none" }}>
             <div className="card-icon matches-icon">
               <FaSearch />
             </div>
@@ -51,7 +51,7 @@ function Dashboard() {
             <div className="card-cta">Explore Matches</div>
           </Link>
 
-          <Link to="/messages" className={`card group ${isVisible ? 'visible' : ''} delay-3`}>
+          <Link to="/messages" className={`card group ${isVisible ? 'visible' : ''} delay-3`} style={{ textDecoration: "none" }}>
             <div className="card-icon messages-icon">
               <FaComments />
             </div>
@@ -60,9 +60,11 @@ function Dashboard() {
             <div className="card-cta">Open Messages</div>
           </Link>
 
+
           <Link to="/settings" className={`card group ${isVisible ? 'visible' : ''} delay-4`}>
             <div className="card-icon profile-icon">
               <FaCog />
+
             </div>
             <h3>Account Settings</h3>
             <p>Update your account preferences, email, and password.</p>
