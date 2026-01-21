@@ -101,6 +101,7 @@ function App() {
 
             {/* Other pages */}
             <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
             <Route path="/help" element={<Help />} />
             {/* <Route path="/testimonials" element={<Testimonials />} /> */}
 
