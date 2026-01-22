@@ -5,9 +5,8 @@ import Footer from "../components/Footer";
 import {
   FaUsers, FaUserFriends, FaCheckCircle,
   FaBriefcase, FaMapMarkerAlt, FaGraduationCap, FaRulerVertical,
-  FaStar, FaClock, FaUserCircle
+  FaStar, FaClock, FaUserCircle, FaTimes, FaCheck
 } from "react-icons/fa";
-
 
 import "./Matches.css";
 
@@ -16,10 +15,10 @@ const API_URL = import.meta.env.VITE_API || "http://localhost:5000/api";
 function Matches() {
   const navigate = useNavigate();
 
-
   const [isVisible, setIsVisible] = useState(false);
   const [matches, setMatches] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]); // ⭐ NEW: Store pending requests
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
   const [ageRange, setAgeRange] = useState([20, 35]);
@@ -44,6 +43,7 @@ function Matches() {
 
     fetchMatches();
     fetchFriends();
+    fetchPendingRequests(); // ⭐ NEW: Fetch pending requests
     setTimeout(() => setIsVisible(true), 100);
   }, [navigate]);
 
@@ -104,6 +104,27 @@ function Matches() {
     }
   };
 
+  // ⭐ NEW: Fetch pending requests (people who sent interest to me)
+  const fetchPendingRequests = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/matches/requests`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Fetched pending requests:", data);
+        setPendingRequests(data.requests || []);
+      }
+    } catch (error) {
+      console.error("Error fetching pending requests:", error);
+    }
+  };
+
   const handleShowInterest = async (matchId) => {
     try {
       const token = localStorage.getItem("token");
@@ -128,7 +149,6 @@ function Matches() {
       console.log("Interest response:", data);
 
       if (response.ok) {
-
         setMatches((prev) =>
           prev.map((m) =>
             m.id === matchId
@@ -143,10 +163,8 @@ function Matches() {
         );
 
         if (data.match.isMutual) {
-          alert("You are now friends!");
-
+          alert("You are now friends! 🎉");
           fetchFriends();
-
           fetchMatches();
         } else {
           alert("Interest sent successfully! ⏳");
@@ -157,6 +175,186 @@ function Matches() {
     } catch (error) {
       console.error("Error sending interest:", error);
       alert("An error occurred");
+    }
+  };
+
+  // ⭐ SIMPLIFIED: Cancel sent interest
+  const handleCancelRequest = async (matchId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const match = matches.find((m) => m.id === matchId);
+
+      if (!match) {
+        alert("Match not found");
+        return;
+      }
+
+      console.log("Cancelling interest to userId:", match.userId);
+
+      // Call the simplified cancel endpoint
+      const response = await fetch(
+        `${API_URL}/matches/interest/${match.userId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Request cancelled successfully");
+        
+        // Update UI
+        setMatches((prev) =>
+          prev.map((m) =>
+            m.id === matchId
+              ? { ...m, interestSent: false, status: "none", matchId: null }
+              : m
+          )
+        );
+      } else {
+        alert(data.message || "Failed to cancel request");
+      }
+    } catch (error) {
+      console.error("Error cancelling request:", error);
+      alert("An error occurred while cancelling request");
+    }
+  };
+
+  // ⭐ NEW: Accept interest request
+  const handleAcceptRequest = async (matchId, userId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      // Find the interest document
+      const notificationsResponse = await fetch(`${API_URL}/interests/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (notificationsResponse.ok) {
+        const notifData = await notificationsResponse.json();
+        const notification = notifData.notifications.find(
+          (n) => n.from._id === userId && n.status === 'pending'
+        );
+
+        if (notification) {
+          // Accept the interest
+          const acceptResponse = await fetch(
+            `${API_URL}/interests/${notification._id}/accept`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const data = await acceptResponse.json();
+
+          if (acceptResponse.ok) {
+            alert("Request accepted! You are now friends! 🎉");
+            
+            // Refresh all data
+            fetchMatches();
+            fetchFriends();
+            fetchPendingRequests();
+          } else {
+            alert(data.message || "Failed to accept request");
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error accepting request:", error);
+      alert("An error occurred while accepting request");
+    }
+  };
+
+  // ⭐ NEW: Reject interest request
+  const handleRejectRequest = async (matchId, userId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      // Find the interest document
+      const notificationsResponse = await fetch(`${API_URL}/interests/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (notificationsResponse.ok) {
+        const notifData = await notificationsResponse.json();
+        const notification = notifData.notifications.find(
+          (n) => n.from._id === userId && n.status === 'pending'
+        );
+
+        if (notification) {
+          // Reject the interest
+          const rejectResponse = await fetch(
+            `${API_URL}/interests/${notification._id}/reject`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const data = await rejectResponse.json();
+
+          if (rejectResponse.ok) {
+            alert("Request rejected");
+            
+            // Refresh data
+            fetchMatches();
+            fetchPendingRequests();
+          } else {
+            alert(data.message || "Failed to reject request");
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error rejecting request:", error);
+      alert("An error occurred while rejecting request");
+    }
+  };
+
+  // ⭐ NEW: Unfriend functionality
+  const handleUnfriend = async (matchId, friendName) => {
+    const confirmUnfriend = window.confirm(
+      `Are you sure you want to unfriend ${friendName}? This will delete all your messages with them.`
+    );
+
+    if (!confirmUnfriend) return;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/matches/${matchId}/unfriend`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Friend removed successfully");
+        
+        // Refresh data
+        fetchFriends();
+        fetchMatches();
+      } else {
+        alert(data.message || "Failed to remove friend");
+      }
+    } catch (error) {
+      console.error("Error unfriending:", error);
+      alert("An error occurred while removing friend");
     }
   };
 
@@ -190,12 +388,15 @@ function Matches() {
     navigate("/messages");
   };
 
-
   const handleViewProfile = (match) => {
     setSelectedMatch(match);
     setShowProfileModal(true);
   };
 
+  // ⭐ Helper function to check if this match has a pending request TO me
+  const hasPendingRequestToMe = (userId) => {
+    return pendingRequests.some((req) => req.userId === userId);
+  };
 
   const filteredMatches = matches.filter((match) => {
     if (filters.religion && match.religion !== filters.religion) return false;
@@ -209,11 +410,9 @@ function Matches() {
     return true;
   });
 
-
   const filteredFriends = friends.filter((friend) =>
     friend.name?.toLowerCase().includes("")
   );
-
 
   const resetFilters = () => {
     setFilters({
@@ -228,7 +427,6 @@ function Matches() {
     fetchMatches();
   };
 
-
   const getDisplayList = () => {
     if (activeFilter === "friends") {
       return filteredFriends;
@@ -240,7 +438,6 @@ function Matches() {
   };
 
   const displayList = getDisplayList();
-
 
   if (loading) {
     return (
@@ -259,7 +456,6 @@ function Matches() {
       <Navbar />
 
       <main className="matches-main">
-
         <div className={`matches-header ${isVisible ? "visible" : ""}`}>
           <div className="header-bg-circle circle-1"></div>
           <div className="header-bg-circle circle-2"></div>
@@ -273,7 +469,6 @@ function Matches() {
             </p>
           </div>
         </div>
-
 
         <div className={`filter-section ${isVisible ? "visible" : ""}`}>
           <div className="filter-header">
@@ -316,7 +511,6 @@ function Matches() {
             </button>
           </div>
 
-          {/* Advanced Filters */}
           {showFilters && activeFilter !== "friends" && (
             <div className="advanced-filters">
               <div className="filters-grid">
@@ -423,7 +617,6 @@ function Matches() {
           )}
         </div>
 
-        {/* Results Info */}
         <div className={`results-info ${isVisible ? "visible" : ""}`}>
           <p>
             Showing <strong>{displayList.length}</strong>{" "}
@@ -431,7 +624,6 @@ function Matches() {
           </p>
         </div>
 
-        {/* Matches Grid */}
         <div className={`matches-grid ${isVisible ? "visible" : ""}`}>
           {displayList.length > 0 ? (
             displayList.map((match, index) => (
@@ -440,7 +632,6 @@ function Matches() {
                 className="match-card"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                {/* Profile Image */}
                 <div className="match-image-container">
                   <img
                     src={match.image}
@@ -452,13 +643,11 @@ function Matches() {
                       ✓
                     </div>
                   )}
-                  {/* ⭐ Show friend badge for friends */}
                   {activeFilter === "friends" && (
-                    <div className="friend-badge">Friend </div>
+                    <div className="friend-badge">Friend 💚</div>
                   )}
                 </div>
 
-                {/* Match Info */}
                 <div className="match-info">
                   <h3 className="match-name">{match.name}</h3>
                   <p className="match-age">{match.age} years old</p>
@@ -486,7 +675,6 @@ function Matches() {
                     {match.about.substring(0, 100)}...
                   </p>
 
-                  {/* Interests */}
                   <div className="match-interests">
                     {match.interests &&
                       match.interests.slice(0, 3).map((interest, idx) => (
@@ -496,7 +684,7 @@ function Matches() {
                       ))}
                   </div>
 
-                  {/* Actions */}
+                  {/* ⭐⭐⭐ UPDATED ACTION BUTTONS ⭐⭐⭐ */}
                   <div className="match-actions">
                     <button className="btn-view-profile" onClick={() => handleViewProfile(match)}>
                       <FaUserCircle className="action-icon" />
@@ -506,20 +694,52 @@ function Matches() {
                       <FaStar className="action-icon" />
                     </button>
 
-                    {/* ⭐ CHANGED: Show different button based on status */}
+                    {/* Show different buttons based on relationship status */}
                     {activeFilter === "friends" ? (
-                      <button className="btn-message" onClick={() => handleMessageFriend(match.matchId)}>
-                        💬 Message
-                      </button>
+                      // Already friends - show message and unfriend buttons
+                      <div className="action-buttons-group">
+                        <button className="btn-message" onClick={() => handleMessageFriend(match.matchId)}>
+                          💬 Message
+                        </button>
+                        <button 
+                          className="btn-unfriend" 
+                          onClick={() => handleUnfriend(match.matchId, match.name)}
+                          title="Remove Friend"
+                        >
+                          <FaTimes /> Unfriend
+                        </button>
+                      </div>
+                    ) : hasPendingRequestToMe(match.userId) ? (
+                      // Someone sent request TO ME - show Accept/Reject
+                      <div className="action-buttons-group">
+                        <button 
+                          className="btn-accept" 
+                          onClick={() => handleAcceptRequest(match.id, match.userId)}
+                          title="Accept Request"
+                        >
+                          <FaCheck /> Accept
+                        </button>
+                        <button 
+                          className="btn-reject" 
+                          onClick={() => handleRejectRequest(match.id, match.userId)}
+                          title="Reject Request"
+                        >
+                          <FaTimes /> Reject
+                        </button>
+                      </div>
                     ) : match.interestSent || match.status === "pending" ? (
-                      <button className="btn-pending" disabled>
-                        <FaClock className="action-icon" /> Pending
+                      // I sent request to THEM - show Cancel Request
+                      <button 
+                        className="btn-cancel-request" 
+                        onClick={() => handleCancelRequest(match.id)}
+                      >
+                        <FaTimes className="action-icon" /> Cancel Request
                       </button>
                     ) : (
+                      // No relationship - show Send Interest
                       <button className="btn-interest" onClick={() => handleShowInterest(match.id)}>
-                        Send Interest
+                        💝 Send Interest
                       </button>
-
                     )}
                   </div>
                 </div>
@@ -633,6 +853,7 @@ function Matches() {
                   </div>
                 </div>
 
+                {/* ⭐ UPDATED MODAL ACTIONS */}
                 <div className="modal-actions">
                   <button
                     className="btn-modal-shortlist"
@@ -641,17 +862,45 @@ function Matches() {
                     ⭐ Shortlist
                   </button>
 
-                  {/* ⭐ Modal actions based on status */}
                   {activeFilter === "friends" ? (
-                    <button
-                      className="btn-modal-message"
-                      onClick={() => handleMessageFriend(selectedMatch.matchId)}
-                    >
-                      💬 Message
-                    </button>
+                    <div className="modal-action-buttons-group">
+                      <button
+                        className="btn-modal-message"
+                        onClick={() => handleMessageFriend(selectedMatch.matchId)}
+                      >
+                        💬 Message
+                      </button>
+                      <button
+                        className="btn-modal-unfriend"
+                        onClick={() => {
+                          setShowProfileModal(false);
+                          handleUnfriend(selectedMatch.matchId, selectedMatch.name);
+                        }}
+                      >
+                        ✕ Unfriend
+                      </button>
+                    </div>
+                  ) : hasPendingRequestToMe(selectedMatch.userId) ? (
+                    <div className="modal-action-buttons-group">
+                      <button
+                        className="btn-modal-accept"
+                        onClick={() => handleAcceptRequest(selectedMatch.id, selectedMatch.userId)}
+                      >
+                        ✓ Accept Request
+                      </button>
+                      <button
+                        className="btn-modal-reject"
+                        onClick={() => handleRejectRequest(selectedMatch.id, selectedMatch.userId)}
+                      >
+                        ✕ Reject Request
+                      </button>
+                    </div>
                   ) : selectedMatch.interestSent || selectedMatch.status === "pending" ? (
-                    <button className="btn-modal-pending" disabled>
-                      ⏳ Pending
+                    <button
+                      className="btn-modal-cancel"
+                      onClick={() => handleCancelRequest(selectedMatch.id)}
+                    >
+                      ✕ Cancel Request
                     </button>
                   ) : (
                     <button
