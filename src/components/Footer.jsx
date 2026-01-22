@@ -9,7 +9,7 @@ function Footer() {
         <div className="footer-top">
           {/* Brand */}
           <div className="footer-brand">
-            <h3>Mashallah</h3>
+            <h3>FaithBond</h3>
             <p>
               Connecting Muslims worldwide to find their perfect life partner
               through a trusted and respectful platform.
