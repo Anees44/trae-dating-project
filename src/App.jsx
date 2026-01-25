@@ -7,6 +7,7 @@ import Features from "./components/Features.jsx";
 // import Testimonials from "./components/Testimonials";
 import Footer from "./components/Footer.jsx";
 import NotificationBell from "./components/NotificationBell.jsx";
+import { Navigate } from "react-router-dom";
 
 
 import Login from "./pages/Login.jsx";
@@ -18,12 +19,23 @@ import Matches from './pages/Matches.jsx';
 import Messages from './pages/Messages.jsx';
 import Settings from './pages/Settings.jsx';
 import Help from "./pages/Help";
+import AdminDashboard from "./pages/AdminDashboard.jsx"
 
 
 import './index.css'; // Import plain CSS
 import About from "./components/About.jsx";
 
 // Component to conditionally show NotificationBell
+function AdminRoute({ children }) {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+
+  if (!token) return <Navigate to="/login" />;
+  if (role !== "admin") return <Navigate to="/dashboard" />;
+
+  return children;
+}
+
 function ConditionalNotificationBell() {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -97,6 +109,14 @@ function App() {
             <Route path="/matches" element={<Matches />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/settings" element={<Settings />} />
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
 
 
             {/* Other pages */}

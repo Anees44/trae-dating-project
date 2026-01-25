@@ -35,46 +35,48 @@ function Login() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setSuccess('')
+  e.preventDefault()
+  setError('')
+  setSuccess('')
 
-    if (!validateForm()) return
-    setLoading(true)
+  if (!validateForm()) return
+  setLoading(true)
 
-    try {
-      const res = await axios.post(import.meta.env.VITE_API_LOGIN, formData)
-      localStorage.setItem('token', res.data.token)
-      setSuccess('Login successful!')
+  try {
+    const res = await axios.post(import.meta.env.VITE_API_LOGIN, formData)
 
-      // Check if profile exists
-      try {
-        const profileRes = await axios.get(`${import.meta.env.VITE_API}/profile/me`, {
-          headers: { Authorization: `Bearer ${res.data.token}` }
-        })
+    localStorage.setItem('token', res.data.token)
+    localStorage.setItem('role', res.data.user.role)   // 🔥 role save
 
-        // Profile exists - go to dashboard
-        if (profileRes.data) {
-          setTimeout(() => navigate('/dashboard'), 1200)
-        }
-        
-      } catch (profileErr) {
-        // Profile doesn't exist (404) or error - go to profile creation
-        if (profileErr.response?.status === 404) {
-          setSuccess('Please create your profile first!')
-          setTimeout(() => navigate('/profile'), 1200)
-        } else {
-          // For any other error, also redirect to profile
-          setTimeout(() => navigate('/profile'), 1200)
-        }
-      }
+    setSuccess('Login successful!')
 
-    } catch (err) {
-      setError(err.response?.data?.message || 'Invalid credentials. Please try again.')
-    } finally {
-      setLoading(false)
+    // 🔁 Role based redirection
+    if (res.data.user.role === "admin") {
+      setTimeout(() => navigate('/admin'), 1200)
+      return
     }
+
+    // Normal user flow
+    try {
+      const profileRes = await axios.get(
+        `${import.meta.env.VITE_API}/profile/me`,
+        { headers: { Authorization: `Bearer ${res.data.token}` } }
+      )
+
+      if (profileRes.data) {
+        setTimeout(() => navigate('/dashboard'), 1200)
+      }
+    } catch (profileErr) {
+      setTimeout(() => navigate('/profile'), 1200)
+    }
+
+  } catch (err) {
+    setError(err.response?.data?.message || 'Invalid credentials. Please try again.')
+  } finally {
+    setLoading(false)
   }
+}
+
 
   return (
     <div className="login-page">
